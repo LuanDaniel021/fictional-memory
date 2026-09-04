@@ -7,8 +7,22 @@ import { SupabaseService } from '../supabase/supabase.service';
 export class UsersService {
   constructor(private readonly supabase: SupabaseService) {}
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(dto: CreateUserDto) {
+    const client = this.supabase.getClient();
+    const { error } = await client.auth.admin.createUser({
+      email: dto.email,
+      password: dto.password,
+
+      user_metadata: {
+        nome: dto.nome,
+      },
+    });
+
+    if (error) {
+        throw error;
+    }
+
+    return 'sucess create users';
   }
 
   findAll() {
