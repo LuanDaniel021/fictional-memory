@@ -1,24 +1,30 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { ExtractJwt, SecretOrKeyProvider, Strategy } from 'passport-jwt';
 
 @Injectable()
 export class SupabaseStrategy extends PassportStrategy(Strategy, 'supabase') {
     constructor(private readonly config: ConfigService) {
         const url = config.get<string>('SUPABASE_URL');
-        const key = config.get<string>('SUPABASE_SECRET_KEY');
 
-        if (!url || !key) {
+        if (!url) {
             throw Error(
-                'SUPABASE_URL ou SUPABASE_SECRET_KEY, não definido'
+                'SUPABASE_URL não definido'
             );
         }
+
+        const secretOrKeyProvider = {
+            cache: true,
+            rateLimit: true,
+            jwksRequestsPerMinute: 5,
+            jwksUri: `${url}/auth/v1/.well-known/jwks.json`,
+        } as unknown as SecretOrKeyProvider;
 
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey:key,
+            secretOrKeyProvider,
             algorithms: ['RS256'],
         });
     }
