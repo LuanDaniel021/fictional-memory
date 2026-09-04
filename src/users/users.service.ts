@@ -12,7 +12,7 @@ export class UsersService {
     const { error } = await client.auth.admin.createUser({
       email: dto.email,
       password: dto.password,
-
+      email_confirm: true,
       user_metadata: {
         nome: dto.nome,
       },
@@ -22,7 +22,7 @@ export class UsersService {
         throw error;
     }
 
-    return 'sucess create users';
+    return 'success create users';
   }
 
   findAll() {
@@ -37,7 +37,12 @@ export class UsersService {
     return `This action updates a #${id} user`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    const client = this.supabase.getClient();
+    const { error } = await client.auth.admin.deleteUser(id)
+    if (error) {
+        throw error;
+    }
+    return `success remove user`;
   }
 }
