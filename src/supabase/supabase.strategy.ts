@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -22,7 +22,16 @@ export class SupabaseStrategy extends PassportStrategy(Strategy, 'supabase') {
             algorithms: ['RS256'],
         });
     }
-    validate(...args: any[]): unknown {
-        throw new Error('Method not implemented.');
+
+    validate(payload: any): unknown {
+        return !payload || !payload.sub
+        ? (() => {
+            throw new UnauthorizedException('Token inválido');
+            })()
+        : {
+            id: payload.sub,
+            email: payload.email ?? '',
+            role: payload.role ?? 'authenticated',
+            };
     }
 }
