@@ -4,23 +4,24 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SupabaseAuthGuard } from '../supabase/supabase.auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('users')
 @UseGuards(SupabaseAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
+  @Post("create")
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
-  @Post()
-  login(@Param('id') id: string) {
-    return this.usersService.login('','');
+  @Post("login")
+  login(@Body() loginUserDto: LoginUserDto) {
+    return this.usersService.login(loginUserDto.email, loginUserDto.password);
   }
 
-  @Patch()
+  @Patch("Update")
   @ApiBearerAuth('access-token')
   update(
     @Req() request: Request & { user: { id: string } },
@@ -29,7 +30,7 @@ export class UsersController {
     return this.usersService.update(request.user.id, updateUserDto);
   }
 
-  @Delete()
+  @Delete("delete")
   @ApiBearerAuth('access-token')
   remove(@Req() request: Request & { user: { id: string } }) {
     return this.usersService.remove(request.user.id);
