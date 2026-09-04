@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { SupabaseAuthGuard } from '../supabase/supabase.auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('users')
+@UseGuards(SupabaseAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -12,23 +15,23 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
+  @Post()
+  login(@Param('id') id: string) {
+    return this.usersService.login('','');
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @Patch()
+  @ApiBearerAuth('access-token')
+  update(
+    @Req() request: Request & { user: { id: string } },
+    @Body() updateUserDto: UpdateUserDto
+  ) {
+    return this.usersService.update(request.user.id, updateUserDto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  @Delete()
+  @ApiBearerAuth('access-token')
+  remove(@Req() request: Request & { user: { id: string } }) {
+    return this.usersService.remove(request.user.id);
   }
 }

@@ -7,6 +7,19 @@ import { SupabaseService } from '../supabase/supabase.service';
 export class UsersService {
   constructor(private readonly supabase: SupabaseService) {}
 
+  async login(email: string, password: string) {
+    const client = this.supabase.getClient();
+    const { data, error } = await client.auth.signInWithPassword({email, password});
+
+    if (error) {
+        throw error;
+    }
+
+    return {
+      "access-token": data.session.access_token
+    };
+  }
+
   async create(dto: CreateUserDto) {
     const client = this.supabase.getClient();
     const { error } = await client.auth.admin.createUser({
@@ -25,16 +38,22 @@ export class UsersService {
     return 'success create users';
   }
 
-  findAll() {
-    return `This action returns all users`;
-  }
+  async update(id: string, dto: UpdateUserDto) {
+    const client = this.supabase.getClient();
+    const { error } = await client.auth.admin.updateUserById(id, {
+      email: dto.email,
+      password: dto.password,
+      email_confirm: true,
+      user_metadata: {
+        nome: dto.nome,
+      }
+    });
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+    if (error) {
+        throw error;
+    }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    return `success update a user`;
   }
 
   async remove(id: string) {
