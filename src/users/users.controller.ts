@@ -7,7 +7,7 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('users')
-@UseGuards(SupabaseAuthGuard)
+@ApiBearerAuth('access-token')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -22,7 +22,7 @@ export class UsersController {
   }
 
   @Patch("Update")
-  @ApiBearerAuth('access-token')
+  @UseGuards(SupabaseAuthGuard)
   update(
     @Req() request: Request & { user: { id: string } },
     @Body() updateUserDto: UpdateUserDto
@@ -31,7 +31,7 @@ export class UsersController {
   }
 
   @Delete("delete")
-  @ApiBearerAuth('access-token')
+  @UseGuards(SupabaseAuthGuard)
   remove(@Req() request: Request & { user: { id: string } }) {
     return this.usersService.remove(request.user.id);
   }
