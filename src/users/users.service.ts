@@ -7,35 +7,51 @@ import { SupabaseService } from '../supabase/supabase.service';
 export class UsersService {
   constructor(private readonly supabase: SupabaseService) {}
 
-  async login(email: string, password: string) {
+  async create(dto: CreateUserDto) {
     const client = this.supabase.getClient();
-    const { data, error } = await client.auth.signInWithPassword({email, password});
-
+    const { error } = await client.auth.signUp({
+      email: dto.email,
+      password: dto.password,
+      options: {
+        data: {
+          nome: dto.nome,
+        },
+      },
+    });
     if (error) {
         throw error;
     }
-
-    return {
-      "access-token": data.session.access_token
-    };
+    return 'success create users';
   }
 
-  async create(dto: CreateUserDto) {
+  async verifyEmailCode(email: string, code: string) {
     const client = this.supabase.getClient();
-    const { error } = await client.auth.admin.createUser({
-      email: dto.email,
-      password: dto.password,
-      email_confirm: true,
-      user_metadata: {
-        nome: dto.nome,
-      },
+
+    const { data, error } = await client.auth.verifyOtp({
+      email,
+      token: code,
+      type: 'signup',
     });
 
     if (error) {
-        throw error;
+      throw error;
     }
 
-    return 'success create users';
+    return {
+      message: 'E-mail confirmado com sucesso!',
+      session: data.session,
+    };
+  }
+
+  async login(email: string, password: string) {
+    const client = this.supabase.getClient();
+    const { data, error } = await client.auth.signInWithPassword({email, password});
+    if (error) {
+        throw error;
+    }
+    return {
+      "access-token": data.session.access_token
+    };
   }
 
   async update(id: string, dto: UpdateUserDto) {
@@ -48,11 +64,9 @@ export class UsersService {
         nome: dto.nome,
       }
     });
-
     if (error) {
         throw error;
     }
-
     return `success update a user`;
   }
 
