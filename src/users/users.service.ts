@@ -24,25 +24,6 @@ export class UsersService {
     return 'success create users';
   }
 
-  async verifyEmailCode(email: string, code: string) {
-    const client = this.supabase.getClient();
-
-    const { data, error } = await client.auth.verifyOtp({
-      email,
-      token: code,
-      type: 'signup',
-    });
-
-    if (error) {
-      throw error;
-    }
-
-    return {
-      message: 'E-mail confirmado com sucesso!',
-      session: data.session,
-    };
-  }
-
   async login(email: string, password: string) {
     const client = this.supabase.getClient();
     const { data, error } = await client.auth.signInWithPassword({email, password});
