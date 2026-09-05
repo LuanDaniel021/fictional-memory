@@ -18,12 +18,12 @@ export class UsersController {
 
   @Post("verifyEmailCode")
   verifyEmailCode(@Body() body: { email:string, code:string }) {
-    return this.usersService.login(body.email, body.code);
+    return this.usersService.verifyEmailCode(body.email, body.code);
   }
 
   @Post("login")
   login(@Body() loginUserDto: LoginUserDto) {
-    return this.usersService.verifyEmailCode(loginUserDto.email, loginUserDto.password);
+    return this.usersService.login(loginUserDto.email, loginUserDto.password);
   }
 
   @Patch("Update")
