@@ -1,26 +1,83 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCaminhaoDto } from './dto/create-caminhao.dto';
 import { UpdateCaminhaoDto } from './dto/update-caminhao.dto';
+import { SupabaseService } from '../supabase/supabase.service';
 
 @Injectable()
 export class CaminhoesService {
-  create(createCaminhoeDto: CreateCaminhaoDto) {
-    return 'This action adds a new caminhoe';
+  constructor( private readonly supabase: SupabaseService ) {}
+
+  async create(dto: CreateCaminhaoDto) {
+    const { error } = await this.supabase.getClient()
+      .from('caminhao')
+      .insert(dto)
+
+    if (error) {
+      throw error;
+    }
+
+    return {
+      mensagem: 'Caminhao cadastrado com sucesso!',
+    }
   }
 
-  findAll() {
-    return `This action returns all caminhoes`;
+  async findAll() {
+    const { data, error } = await this.supabase.getClient()
+      .from('caminhao')
+      .select()
+
+    if (error) {
+      throw error;
+    }
+
+    return {
+      mensagem: 'Caminhoes encontrados com sucesso!', data
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} caminhoe`;
+  async findOne(id: number) {
+    const { data, error } = await this.supabase.getClient()
+      .from('caminhao')
+      .select()
+      .eq('id', id)
+      .single()
+
+    if (error) {
+      throw error;
+    }
+
+    return {
+      mensagem: 'Caminhao encontrado com sucesso!', data
+    }
   }
 
-  update(id: number, updateCaminhoeDto: UpdateCaminhaoDto) {
-    return `This action updates a #${id} caminhoe`;
+  async update(id: number, dto: UpdateCaminhaoDto) {
+    const { error } = await this.supabase.getClient()
+      .from('caminhao')
+      .update(dto)
+      .eq('id', id)
+
+    if (error) {
+      throw error;
+    }
+
+    return {
+      mensagem: 'Caminhao atualizado com sucesso!'
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} caminhoe`;
+  async remove(id: number) {
+    const { error } = await this.supabase.getClient()
+      .from('caminhao')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      throw error;
+    }
+
+    return {
+      mensagem: 'Caminhao removido com sucesso!'
+    }
   }
 }
