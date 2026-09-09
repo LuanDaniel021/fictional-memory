@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SupabaseService } from '../supabase/supabase.service';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -26,7 +27,8 @@ export class UsersService {
     };
   }
 
-  async login(email: string, password: string) {
+  async login(dto: LoginUserDto) {
+    const { email, password } = dto;
     const client = this.supabase.getClient();
     const { data, error } = await client.auth.signInWithPassword({email, password});
     if (error) {

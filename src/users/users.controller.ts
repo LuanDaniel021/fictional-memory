@@ -18,10 +18,10 @@ export class UsersController {
 
   @Post("login")
   login(@Body() loginUserDto: LoginUserDto) {
-    return this.usersService.login(loginUserDto.email, loginUserDto.password);
+    return this.usersService.login(loginUserDto);
   }
 
-  @Patch("Update")
+  @Patch("update")
   @UseGuards(SupabaseAuthGuard)
   update(
     @Req() request: Request & { user: { id: string } },
