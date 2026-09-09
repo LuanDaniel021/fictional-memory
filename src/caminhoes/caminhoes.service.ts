@@ -55,7 +55,8 @@ export class CaminhoesService {
     const { data, error } = await this.supabase.getClient()
       .from('caminhao')
       .select(`
-        *, crlv(
+        *,
+        crlv!inner(
           placa
         )
       `)
