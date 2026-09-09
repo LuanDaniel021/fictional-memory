@@ -1,1 +1,3 @@
-export class CreateCaminhaoDto {}
+
+export class CreateCaminhaoDto {
+}
