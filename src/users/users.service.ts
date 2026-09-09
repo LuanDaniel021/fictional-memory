@@ -21,7 +21,9 @@ export class UsersService {
     if (error) {
         throw error;
     }
-    return 'success create users';
+    return {
+      mensagem: 'Usuário cadastrado com sucesso!',
+    };
   }
 
   async login(email: string, password: string) {
@@ -31,7 +33,8 @@ export class UsersService {
         throw error;
     }
     return {
-      "access-token": data.session.access_token
+      mensagem: 'Login efetuado com sucesso!',
+      access_token: data.session.access_token
     };
   }
 
@@ -48,7 +51,9 @@ export class UsersService {
     if (error) {
         throw error;
     }
-    return `success update a user`;
+    return {
+      mensagem: 'Perfil atualizado com sucesso!',
+    };
   }
 
   async remove(id: string) {
@@ -57,6 +62,6 @@ export class UsersService {
     if (error) {
         throw error;
     }
-    return `success remove user`;
+    return { mensagem: 'Usuário removido com sucesso!' };
   }
 }
