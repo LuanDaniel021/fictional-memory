@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateCaminhaoDto } from './dto/create-caminhao.dto';
 import { UpdateCaminhaoDto } from './dto/update-caminhao.dto';
 import { SupabaseService } from '../supabase/supabase.service';
+import { Caminhao } from './entities/caminhao.entity';
 
 @Injectable()
 export class CaminhoesService {
@@ -24,7 +25,15 @@ export class CaminhoesService {
   async findAll() {
     const { data, error } = await this.supabase.getClient()
       .from('caminhao')
-      .select()
+      .select<string, Caminhao>(`
+        km_atual, status,
+        crlv!inner(
+          uf, crv, tipo, marca, placa, chassi, modelo, especie, renavam, exercicio, ano_modelo, ano_fabricacao
+        )
+        motorista!inner(
+          nome, cpf, cnh, categoria, validade_cnh
+        )
+      `)
 
     if (error) {
       throw error;
@@ -55,8 +64,14 @@ export class CaminhoesService {
     const { data, error } = await this.supabase.getClient()
       .from('caminhao')
       .select(`
-        *,
+        km_atual, status,
         crlv!inner(
+          uf, crv, tipo, marca, placa, chassi, modelo, especie, renavam, exercicio, ano_modelo, ano_fabricacao
+        ),
+        motorista(
+          nome, cpf, numero_cnh, categoria_cnh
+        ),
+        pneu(
           *
         )
       `)
