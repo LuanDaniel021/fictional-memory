@@ -6,6 +6,7 @@ import { SupabaseModule } from './supabase/supabase.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { CaminhoesModule } from './caminhoes/caminhoes.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
     AuthModule,
     UsersModule,
     SupabaseModule,
-    DashboardModule
+    DashboardModule,
+    CaminhoesModule
   ],
   controllers: [AppController],
   providers: [AppService],
