@@ -57,7 +57,7 @@ export class CaminhoesService {
       .select(`
         *,
         crlv!inner(
-          placa
+          *
         )
       `)
       .eq('crlv.placa', plate)
