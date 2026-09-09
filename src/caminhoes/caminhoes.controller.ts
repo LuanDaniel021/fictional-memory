@@ -17,9 +17,9 @@ export class CaminhoesController {
     return this.caminhoesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.caminhoesService.findOne(+id);
+  @Get(':plate')
+  findPlate(@Param('plate') plate: string) {
+    return this.caminhoesService.findPlate(plate);
   }
 
   @Patch(':id')

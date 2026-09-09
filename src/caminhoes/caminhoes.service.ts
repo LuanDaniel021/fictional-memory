@@ -51,6 +51,26 @@ export class CaminhoesService {
     }
   }
 
+  async findPlate(plate: string) {
+    const { data, error } = await this.supabase.getClient()
+      .from('caminhao')
+      .select(`
+        *, crlv(
+          plate
+        )
+      `)
+      .eq('crlv.plate', plate)
+      .single()
+
+    if (error) {
+      throw error;
+    }
+
+    return {
+      mensagem: 'Caminhao encontrado com sucesso!', data
+    }
+  }
+
   async update(id: number, dto: UpdateCaminhaoDto) {
     const { error } = await this.supabase.getClient()
       .from('caminhao')
