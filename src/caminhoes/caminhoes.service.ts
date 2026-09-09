@@ -56,10 +56,10 @@ export class CaminhoesService {
       .from('caminhao')
       .select(`
         *, crlv(
-          plate
+          placa
         )
       `)
-      .eq('crlv.plate', plate)
+      .eq('crlv.placa', plate)
       .single()
 
     if (error) {
