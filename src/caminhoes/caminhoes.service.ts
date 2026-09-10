@@ -41,17 +41,16 @@ export class CaminhoesService {
   async findAll() {
     const { data, error } = await this.supabase.getClient()
       .from('caminhao')
-      .select(`
-        km_atual, status,
+      .select<string, Caminhao>(`
+        *,
         crlv!inner(
-          uf, crv, tipo, marca, placa, chassi, modelo,
-          especie, renavam, exercicio, ano_modelo, ano_fabricacao
+          *
         ),
         motorista(
-          nome, cpf, numero_cnh, categoria_cnh
+          *
         ),
         pneu(
-          marca, status, posicao, sulco_inicial_mm
+          *
         )
       `)
 
