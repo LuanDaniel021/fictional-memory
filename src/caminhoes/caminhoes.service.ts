@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CreateCaminhaoDto } from './dto/create-caminhao.dto';
 import { UpdateCaminhaoDto } from './dto/update-caminhao.dto';
 import { SupabaseService } from '../supabase/supabase.service';
-import { Caminhao } from './entities/caminhao.entity';
 import { CrlvService } from '../crlvs/crlvs.service';
 
 @Injectable()
@@ -10,7 +9,7 @@ export class CaminhoesService {
   constructor(
     private readonly supabase: SupabaseService,
     private readonly crlvService: CrlvService
-  ) {}
+  ) { }
 
   async create(dto: CreateCaminhaoDto) {
     const crlv = await this.crlvService.create(dto.crlv);
@@ -38,19 +37,20 @@ export class CaminhoesService {
     };
   }
 
-  async findAll(): Promise<Caminhao[] > {
+  async findAll() {
     const { data, error } = await this.supabase.getClient()
       .from('caminhao')
-      .select<string, Caminhao>(`
-        *,
+      .select(`
+        km_atual, status,
         crlv!inner(
-          *
+          uf, crv, tipo, marca, placa, chassi, modelo,
+          especie, renavam, exercicio, ano_modelo, ano_fabricacao
         ),
         motorista(
-          *
+          nome, cpf, numero_cnh, categoria_cnh
         ),
         pneu(
-          *
+          marca, status, posicao, sulco_inicial_mm
         )
       `)
 
@@ -58,7 +58,9 @@ export class CaminhoesService {
       throw error;
     }
 
-    return data
+    return {
+      mensagem: 'Caminhoes encontrados com sucesso!', data
+    }
   }
 
   async findPlate(plate: string) {

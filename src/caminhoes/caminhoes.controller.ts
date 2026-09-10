@@ -13,7 +13,6 @@ export class CaminhoesController {
   }
 
   @Get()
-  @UseInterceptors(ClassSerializerInterceptor)
   findAll() {
     return this.caminhoesService.findAll();
   }
