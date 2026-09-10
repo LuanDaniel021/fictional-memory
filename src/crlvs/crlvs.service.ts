@@ -30,8 +30,8 @@ export class CrlvService {
     return `This action returns a #${id} crlv`;
   }
 
-  update(id: number, updateCrlvDto: UpdateCrlvDto) {
-    return `This action updates a #${id} crlv`;
+  async update(id: number, updateCrlvDto: UpdateCrlvDto) { // : Promise<Crlv> {
+    return;
   }
 
   remove(id: number) {

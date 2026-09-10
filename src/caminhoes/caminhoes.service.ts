@@ -13,9 +13,7 @@ export class CaminhoesService {
   ) {}
 
   async create(dto: CreateCaminhaoDto) {
-
     const crlv = await this.crlvService.create( dto.crlv );
-
     const { error } = await this.supabase.getClient()
       .from('caminhao')
       .insert({
