@@ -18,17 +18,27 @@ export class CaminhoesController {
   }
 
   @Get(':plate')
-  findPlate(@Param('plate') plate: string) {
-    return this.caminhoesService.findPlate(plate);
+  findOneByPlate(@Param('plate') placa: string) {
+    return this.caminhoesService.findOneByPlate(placa);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCaminhoeDto: UpdateCaminhaoDto) {
-    return this.caminhoesService.update(+id, updateCaminhoeDto);
+  @Get(':plate/WithDriver')
+  findOneByPlateWithDriver(@Param('plate') placa: string) {
+    return this.caminhoesService.findOneByPlateWithDriver(placa);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.caminhoesService.remove(+id);
+  @Get(':plate/Pneus')
+  findOneByPlateWithPneus(@Param('plate') placa: string) {
+    return this.caminhoesService.findOneByPlateWithPneus(placa);
+  }
+
+  @Get(':plate/Pneu/:id')
+  findOneByPlateWithPneuById(@Param('plate') placa: string, @Param('id') id: string) {
+    return this.caminhoesService.findOneByPlateWithPneuById(placa, +id);
+  }
+
+  @Patch(':plate')
+  update(@Param('plate') placa: string, @Body() updateCaminhoeDto: UpdateCaminhaoDto) {
+    return this.caminhoesService.update(placa, updateCaminhoeDto);
   }
 }

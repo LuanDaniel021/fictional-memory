@@ -29,7 +29,7 @@ export class CrlvService {
     return data ?? [];
   }
 
-  async findOne(id: number): Promise<Crlv> {
+  async findOneById(id: number): Promise<Crlv> {
     const { data, error } = await this.supabase.getClient()
       .from('crlv')
       .select('*')
@@ -38,6 +38,23 @@ export class CrlvService {
 
     if (error) throw error;
     if (!data) throw new NotFoundException('CRLV não encontrado');
+    return data;
+  }
+
+  async findOneByPlate(placa: string): Promise<Crlv> {
+    const { data, error } = await this.supabase.getClient()
+      .from('crlv')
+      .select('*')
+      .eq('placa', placa)
+      .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+    if (!data) {
+      throw new NotFoundException('CRLV não encontrado');
+    }
+    
     return data;
   }
 

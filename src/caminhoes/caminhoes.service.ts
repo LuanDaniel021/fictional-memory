@@ -3,6 +3,7 @@ import { CreateCaminhaoDto } from './dto/create-caminhao.dto';
 import { UpdateCaminhaoDto } from './dto/update-caminhao.dto';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CrlvService } from '../crlvs/crlvs.service';
+import { PneusService } from '../pneus/pneus.service';
 
 @Injectable()
 export class CaminhoesService {
@@ -14,15 +15,17 @@ export class CaminhoesService {
   async create(dto: CreateCaminhaoDto) {
     const crlv = await this.crlvService.create(dto.crlv);
 
+    const contains = {
+        motorista: dto.motorista_id !== undefined,
+        pneus: dto.pneus !== undefined && dto.pneus.length > 0
+    }
+
     const payload: Record<string, any> = {
       km_atual: dto.km_atual,
-      status: dto.status,
       crlv_id: crlv.id,
+      status: contains.motorista && contains.pneus ? 'Ativo' : 'Inativo',
+      motorista_id: contains.motorista ? dto.motorista_id : null,
     };
-
-    if (dto.motorista_id) {
-      payload.motorista_id = dto.motorista_id;
-    }
 
     const { data: caminhao, error } = await this.supabase.getClient()
       .from('caminhao')
@@ -40,7 +43,9 @@ export class CaminhoesService {
         .update({ caminhao_id: caminhao.id })
         .in('id', dto.pneus);
 
-      if (pneusError) throw pneusError;
+      if (pneusError) {
+        throw pneusError;
+      }
     }
     return {
       mensagem: 'Caminhao cadastrado com sucesso!',
@@ -51,17 +56,7 @@ export class CaminhoesService {
     const { data, error } = await this.supabase.getClient()
       .from('caminhao')
       .select(`
-        km_atual, status,
-        crlv!inner(
-          uf, crv, tipo, marca, placa, chassi, modelo,
-          especie, renavam, exercicio, ano_modelo, ano_fabricacao
-        ),
-        motorista(
-          nome, cpf, numero_cnh, categoria_cnh
-        ),
-        pneu(
-          marca, status, posicao, sulco_inicial_mm
-        )
+        *, crlv!inner( * ), motorista( * ), pneu( * )
       `)
 
     if (error) {
@@ -73,23 +68,13 @@ export class CaminhoesService {
     }
   }
 
-  async findPlate(plate: string) {
+  async findOneByPlate(placa: string) {
     const { data, error } = await this.supabase.getClient()
       .from('caminhao')
       .select(`
-        km_atual, status,
-        crlv!inner(
-          uf, crv, tipo, marca, placa, chassi, modelo,
-          especie, renavam, exercicio, ano_modelo, ano_fabricacao
-        ),
-        motorista(
-          nome, cpf, numero_cnh, categoria_cnh
-        ),
-        pneu(
-          marca, status, posicao, sulco_inicial_mm
-        )
+        *, crlv!inner( * ), motorista( * ), pneu( * )
       `)
-      .eq('crlv.placa', plate)
+      .eq('crlv.placa', placa)
       .single()
 
     if (error) {
@@ -101,11 +86,58 @@ export class CaminhoesService {
     }
   }
 
-  async update(id: number, dto: UpdateCaminhaoDto) {
+  async findOneByPlateWithDriver(placa: string) {
+    const { data } = await this.findOneByPlate(placa);
+
+    if (!data) {
+      return {
+        mensagem: 'O caminhao nao possui Motirista definido!', data: null
+      }
+    }
+
+    return {
+      mensagem: 'Motirista encontrado com sucesso!', data: data.motorista
+    }
+  }
+
+  async findOneByPlateWithPneus(placa: string) {
+    const { data } = await this.findOneByPlate(placa);
+    return {
+      mensagem: data.pneu?.length === 0 ? 'O caminhao nao possui Pneus definidos!' : 'Pneus encontrados com sucesso!',
+      data: data.pneu
+    }
+  }
+
+  async findOneByPlateWithPneuById(placa: string, id : number) {
+    const { mensagem, data } = await this.findOneByPlateWithPneus(placa);
+
+    if (data.length === 0) {
+      return {
+        mensagem,
+        data: null
+      };
+    }
+
+    const pneu = data.find((p: any) => p.id === id);
+
+    if (!pneu) {
+      return {
+        mensagem: 'Pneu nao encontrado para o caminhao informado!',
+        data: null
+      };
+    }
+
+    return {
+      mensagem: 'Pneu encontrado com sucesso!', data: pneu
+    }
+  }
+
+  async update(placa: string, dto: UpdateCaminhaoDto) {
+    const crlv = await this.crlvService.findOneByPlate(placa);
     const { error } = await this.supabase.getClient()
       .from('caminhao')
       .update(dto)
-      .eq('id', id)
+      .eq('crlv_id', crlv.id)
 
     if (error) {
       throw error;
@@ -116,11 +148,14 @@ export class CaminhoesService {
     }
   }
 
-  async remove(id: number) {
+  async remove(placa: string) {
+    const crlv = await this.crlvService.findOneByPlate(placa);
     const { error } = await this.supabase.getClient()
       .from('caminhao')
       .delete()
-      .eq('id', id)
+      .eq('crlv_id', crlv.id)
+
+    await this.crlvService.remove(crlv.id);
 
     if (error) {
       throw error;
