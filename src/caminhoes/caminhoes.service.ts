@@ -3,15 +3,26 @@ import { CreateCaminhaoDto } from './dto/create-caminhao.dto';
 import { UpdateCaminhaoDto } from './dto/update-caminhao.dto';
 import { SupabaseService } from '../supabase/supabase.service';
 import { Caminhao } from './entities/caminhao.entity';
+import { CrlvService } from '../crlvs/crlvs.service';
 
 @Injectable()
 export class CaminhoesService {
-  constructor( private readonly supabase: SupabaseService ) {}
+  constructor(
+    private readonly supabase: SupabaseService,
+    private readonly crlvService: CrlvService
+  ) {}
 
   async create(dto: CreateCaminhaoDto) {
+
+    const crlv = await this.crlvService.create( dto.crlv );
+
     const { error } = await this.supabase.getClient()
       .from('caminhao')
-      .insert(dto)
+      .insert({
+        km_atual: 0,
+        status: '',
+        crlv_id: crlv?.id
+      })
 
     if (error) {
       throw error;

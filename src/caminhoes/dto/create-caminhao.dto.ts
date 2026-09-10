@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNumber, IsOptional, IsString } from "class-validator";
-import { Crlv } from "../entities/crlv.entity";
 import { Motorista } from "../entities/motorista.entity";
 import { Pneu } from "../entities/pneu.entity";
+import { CreateCrlvDto } from "../../crlvs/dto/create-crlv.dto";
 
 export class CreateCaminhaoDto {
 
@@ -30,7 +30,7 @@ export class CreateCaminhaoDto {
         "ano_fabricacao": 2021
       }
     })
-    crlv: Crlv
+    crlv: CreateCrlvDto
 
     @ApiProperty({
       example: {
