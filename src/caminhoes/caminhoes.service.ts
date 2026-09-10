@@ -16,13 +16,15 @@ export class CaminhoesService {
 
     const crlv = await this.crlvService.create( dto.crlv );
 
-    const { error } = await this.supabase.getClient()
+    const { data, error } = await this.supabase.getClient()
       .from('caminhao')
       .insert({
         km_atual: 0,
         status: '',
         crlv_id: crlv?.id
       })
+      .select<string, Caminhao>()
+      .single()
 
     if (error) {
       throw error;
@@ -30,7 +32,7 @@ export class CaminhoesService {
 
     return {
       mensagem: 'Caminhao cadastrado com sucesso!',
-    }
+    };
   }
 
   async findAll() {

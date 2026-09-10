@@ -12,7 +12,7 @@ export class CrlvService {
     const { data, error } = await this.supabase.getClient()
       .from('crlv')
       .insert(dto)
-      .select()
+      .select<string, Crlv>()
       .single()
     
     if (error) {
