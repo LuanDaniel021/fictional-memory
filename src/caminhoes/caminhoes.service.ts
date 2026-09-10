@@ -25,17 +25,11 @@ export class CaminhoesService {
   async findAll() {
     const { data, error } = await this.supabase.getClient()
       .from('caminhao')
-      .select(`
+      .select<string,Caminhao>(`
         km_atual, status,
-        crlv!inner(
-          uf, crv, tipo, marca, placa, chassi, modelo, especie, renavam, exercicio, ano_modelo, ano_fabricacao
-        ),
-        motorista(
-          nome, cpf, numero_cnh, categoria_cnh
-        ),
-        pneu(
-          *
-        )
+        crlv!inner( * ),
+        motorista( * ),
+        pneu( * )
       `)
 
     if (error) {
@@ -47,32 +41,16 @@ export class CaminhoesService {
     }
   }
 
-  async findOne(id: number) {
-    const { data, error } = await this.supabase.getClient()
-      .from('caminhao')
-      .select()
-      .eq('id', id)
-      .single()
-
-    if (error) {
-      throw error;
-    }
-
-    return {
-      mensagem: 'Caminhao encontrado com sucesso!', data
-    }
-  }
-
   async findPlate(plate: string) {
     const { data, error } = await this.supabase.getClient()
       .from('caminhao')
-      .select(`
+      .select<string,Caminhao>(`
         km_atual, status,
         crlv!inner(
-          uf, crv, tipo, marca, placa, chassi, modelo, especie, renavam, exercicio, ano_modelo, ano_fabricacao
+          *
         ),
         motorista(
-          nome, cpf, numero_cnh, categoria_cnh
+          *
         ),
         pneu(
           *
