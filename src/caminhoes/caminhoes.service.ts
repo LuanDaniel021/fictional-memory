@@ -38,7 +38,7 @@ export class CaminhoesService {
     };
   }
 
-  async findAll() {
+  async findAll(): Promise<Caminhao[] > {
     const { data, error } = await this.supabase.getClient()
       .from('caminhao')
       .select<string, Caminhao>(`
@@ -58,9 +58,7 @@ export class CaminhoesService {
       throw error;
     }
 
-    return {
-      mensagem: 'Caminhoes encontrados com sucesso!', data
-    }
+    return data
   }
 
   async findPlate(plate: string) {
