@@ -1,10 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  ArrayUnique,
+  IsArray,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { CreateCrlvDto } from '../../crlvs/dto/create-crlv.dto';
-import { CreateMotoristaDto } from '../../motoristas/dto/create-motorista.dto';
-import { CreatePneuDto } from '../../pneus/dto/create-pneus.dto';
-import { Motorista } from '../../motoristas/entities/motorista.entity';
 
 export class CreateCaminhaoDto {
   @IsNumber()
@@ -36,6 +41,7 @@ export class CreateCaminhaoDto {
   crlv: CreateCrlvDto;
 
   @IsOptional()
+  @IsInt()
   @ApiProperty({
     required: false,
     example: 1,
@@ -49,5 +55,8 @@ export class CreateCaminhaoDto {
       1,2,3
     ],
   })
+  @IsArray()
+  @ArrayUnique()
+  @IsInt({ each: true })
   pneus?: number[];
 }

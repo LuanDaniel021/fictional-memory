@@ -13,6 +13,7 @@ import { IpvasModule } from './ipvas/ipvas.module';
 import { ManutencoesModule } from './manutencoes/manutencoes.module';
 import { MedicaoPneusModule } from './medicao_pneus/medicao_pneus.module';
 import { ViagensModule } from './viagens/viagens.module';
+import { CrlvsModule } from './crlvs/crlvs.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { ViagensModule } from './viagens/viagens.module';
     IpvasModule,
     ManutencoesModule,
     MedicaoPneusModule,
-    ViagensModule
+    ViagensModule,
+    CrlvsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

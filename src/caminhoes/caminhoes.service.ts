@@ -24,14 +24,24 @@ export class CaminhoesService {
       payload.motorista_id = dto.motorista_id;
     }
 
-    const { error } = await this.supabase.getClient()
+    const { data: caminhao, error } = await this.supabase.getClient()
       .from('caminhao')
       .insert(payload)
+      .select('id')
+      .single();
 
     if (error) {
       throw error;
     }
 
+    if (dto.pneus?.length) {
+      const { error: pneusError } = await this.supabase.getClient()
+        .from('pneu')
+        .update({ caminhao_id: caminhao.id })
+        .in('id', dto.pneus);
+
+      if (pneusError) throw pneusError;
+    }
     return {
       mensagem: 'Caminhao cadastrado com sucesso!',
     };

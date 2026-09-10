@@ -23,7 +23,22 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+API de gestão de frota construída com NestJS, Supabase e TypeScript.
+
+## MVP da API
+
+Versão atual: **0.1.0**.
+
+- Prefixo das rotas: `/api`
+- Documentação Swagger: `/docs`
+- Saúde da API: `GET /api`
+- CRUD de caminhões: `/api/caminhoes`
+- CRUD de CRLVs: `/api/crlvs`
+- Relacionamento no cadastro de caminhão: CRLV, motorista opcional e pneus por ID
+- Erros HTTP seguem o formato `{ statusCode, message, timestamp, path }`
+
+Os módulos de IPVA, manutenção, medição de pneus e viagens permanecem registrados
+como estrutura de domínio, mas ainda não expõem CRUD público no MVP.
 
 ## Project setup
 

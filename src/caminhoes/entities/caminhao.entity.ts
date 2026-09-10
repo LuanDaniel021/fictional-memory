@@ -2,16 +2,12 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   JoinColumn,
-  OneToMany,
 } from 'typeorm';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Crlv } from '../../crlvs/entities/crlv.entity';
 import { Motorista } from '../../motoristas/entities/motorista.entity';
-import { Viagem } from '../../viagens/entities/viagem.entity';
 import { Pneu } from '../../pneus/entities/pneu.entity';
-import { Manutencao } from '../../manutencoes/entities/manutencao.entity';
 import { Exclude } from 'class-transformer';
 
 
