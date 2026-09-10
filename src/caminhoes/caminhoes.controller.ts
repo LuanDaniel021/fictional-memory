@@ -15,10 +15,10 @@ export class CaminhoesController {
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return {
       mensagem: 'Caminhoes encontrados com sucesso!',
-      data: plainToInstance(Caminhao, this.caminhoesService.findAll()),
+      data: plainToInstance(Caminhao, await this.caminhoesService.findAll()),
     }
   }
 
