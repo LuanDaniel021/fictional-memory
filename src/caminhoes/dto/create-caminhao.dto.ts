@@ -1,8 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsOptional, IsString } from "class-validator";
-import { Motorista } from "../entities/motorista.entity";
-import { Pneu } from "../entities/pneu.entity";
+import { IsNumber, IsOptional, IsString, ValidateNested } from "class-validator";
 import { CreateCrlvDto } from "../../crlvs/dto/create-crlv.dto";
+import { CreateMotoristaDto } from "../../motoristas/dto/create-motorista.dto";
+import { Type } from "class-transformer";
+import { CreatePneuDto } from "../../pneus/dto/create-pneus.dto";
 
 export class CreateCaminhaoDto {
 
@@ -14,6 +15,8 @@ export class CreateCaminhaoDto {
     @ApiProperty({ example: 'Ativo' })
     status: string
 
+    @ValidateNested()
+    @Type(()=>CreateCrlvDto)
     @ApiProperty({
       example: {
         "uf": "SP",
@@ -32,6 +35,9 @@ export class CreateCaminhaoDto {
     })
     crlv: CreateCrlvDto
 
+    @IsOptional()
+    @ValidateNested()
+    @Type(()=>CreateMotoristaDto)
     @ApiProperty({
       example: {
         "nome": "João da Silva",
@@ -40,8 +46,12 @@ export class CreateCaminhaoDto {
         "categoria_cnh": "C"
       }
     })
-    motorista: Motorista
+    motorista: CreateMotoristaDto
 
+    @IsOptional()
+    @IsOptional()
+    @ValidateNested()
+    @Type(()=>CreatePneuDto)
     @ApiProperty({
       example: [{
         "marca": "Pirelli",
@@ -50,5 +60,5 @@ export class CreateCaminhaoDto {
         "pressao": 8.5
       }]
     })
-    pneus: Pneu[]
+    pneus: CreatePneuDto[]
 }

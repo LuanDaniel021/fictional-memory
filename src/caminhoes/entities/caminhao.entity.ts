@@ -1,7 +1,7 @@
 
 import { Entity, Column } from 'typeorm';
-import { Pneu } from './pneu.entity';
-import { Motorista } from './motorista.entity';
+import { Pneu } from '../../pneus/entities/pneu.entity';
+import { Motorista } from '../../motoristas/entities/motorista.entity';
 import { Crlv } from '../../crlvs/entities/crlv.entity';
 
 @Entity()

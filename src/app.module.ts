@@ -8,6 +8,7 @@ import { SupabaseAuthModule } from './supabase/supabase.auth.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { CaminhoesModule } from './caminhoes/caminhoes.module';
 import { MotoristasModule } from './motoristas/motoristas.module';
+import { PneusModule } from './pneus/pneus.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { MotoristasModule } from './motoristas/motoristas.module';
     SupabaseModule,
     DashboardModule,
     CaminhoesModule,
-    MotoristasModule
+    MotoristasModule,
+    PneusModule
   ],
   controllers: [AppController],
   providers: [AppService],
