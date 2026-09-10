@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
-import { CreateDashboardDto } from './dto/create-dashboard.dto';
-import { UpdateDashboardDto } from './dto/update-dashboard.dto';
+// import { CreateDashboardDto } from './dto/create-dashboard.dto';
+// import { UpdateDashboardDto } from './dto/update-dashboard.dto';
 
 @Controller('dashboard')
 export class DashboardController {
