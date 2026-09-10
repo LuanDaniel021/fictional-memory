@@ -21,16 +21,13 @@ export class CaminhoesService {
       crlv_id: crlv.id,
     };
 
-    const motoristaId = (dto.motorista as any)?.id;
-    if (motoristaId) {
-      payload.motorista_id = motoristaId;
+    if (dto.motorista_id) {
+      payload.motorista_id = dto.motorista_id;
     }
 
     const { error } = await this.supabase.getClient()
       .from('caminhao')
       .insert(payload)
-      .select<string, Caminhao>()
-      .single();
 
     if (error) {
       throw error;

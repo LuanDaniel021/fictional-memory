@@ -4,6 +4,7 @@ import { IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
 import { CreateCrlvDto } from '../../crlvs/dto/create-crlv.dto';
 import { CreateMotoristaDto } from '../../motoristas/dto/create-motorista.dto';
 import { CreatePneuDto } from '../../pneus/dto/create-pneus.dto';
+import { Motorista } from '../../motoristas/entities/motorista.entity';
 
 export class CreateCaminhaoDto {
   @IsNumber()
@@ -35,34 +36,18 @@ export class CreateCaminhaoDto {
   crlv: CreateCrlvDto;
 
   @IsOptional()
-  @ValidateNested()
-  @Type(() => CreateMotoristaDto)
   @ApiProperty({
     required: false,
-    example: {
-      nome: 'João da Silva',
-      cpf: '123.456.789-00',
-      numero_cnh: '1234567890',
-      categoria_cnh: 'C',
-    },
+    example: 1,
   })
-  motorista?: CreateMotoristaDto;
+  motorista_id?: number;
 
   @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => CreatePneuDto)
   @ApiProperty({
     required: false,
-    type: [CreatePneuDto],
     example: [
-      {
-        marca: 'Pirelli',
-        modelo: 'Scorpion',
-        posicao: 'Dianteiro Esquerdo',
-        sulco_inicial_mm: 15.5,
-        status: 'Em uso',
-      },
+      1,2,3
     ],
   })
-  pneus?: CreatePneuDto[];
+  pneus?: number[];
 }
