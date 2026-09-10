@@ -58,9 +58,7 @@ export class CaminhoesService {
       throw error;
     }
 
-    return {
-      mensagem: 'Caminhoes encontrados com sucesso!', data
-    }
+    return data;
   }
 
   async findPlate(plate: string) {

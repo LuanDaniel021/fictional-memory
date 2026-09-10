@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ClassSerializerInter
 import { CaminhoesService } from './caminhoes.service';
 import { CreateCaminhaoDto } from './dto/create-caminhao.dto';
 import { UpdateCaminhaoDto } from './dto/update-caminhao.dto';
+import { Caminhao } from './entities/caminhao.entity';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('caminhoes')
 export class CaminhoesController {
@@ -14,7 +16,10 @@ export class CaminhoesController {
 
   @Get()
   findAll() {
-    return this.caminhoesService.findAll();
+    return {
+      mensagem: 'Caminhoes encontrados com sucesso!',
+      data: plainToInstance(Caminhao, this.caminhoesService.findAll()),
+    }
   }
 
   @Get(':plate')
