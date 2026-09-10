@@ -13,16 +13,24 @@ export class CaminhoesService {
   ) {}
 
   async create(dto: CreateCaminhaoDto) {
-    const crlv = await this.crlvService.create( dto.crlv );
+    const crlv = await this.crlvService.create(dto.crlv);
+
+    const payload: Record<string, any> = {
+      km_atual: dto.km_atual,
+      status: dto.status,
+      crlv_id: crlv.id,
+    };
+
+    const motoristaId = (dto.motorista as any)?.id;
+    if (motoristaId) {
+      payload.motorista_id = motoristaId;
+    }
+
     const { error } = await this.supabase.getClient()
       .from('caminhao')
-      .insert({
-        km_atual: 0,
-        status: '',
-        crlv_id: crlv.id
-      })
+      .insert(payload)
       .select<string, Caminhao>()
-      .single()
+      .single();
 
     if (error) {
       throw error;

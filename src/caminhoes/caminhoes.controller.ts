@@ -8,8 +8,8 @@ export class CaminhoesController {
   constructor(private readonly caminhoesService: CaminhoesService) {}
 
   @Post()
-  create(@Body() createCaminhoeDto: CreateCaminhaoDto) {
-    return this.caminhoesService.create(createCaminhoeDto);
+  create(@Body() createCaminhaoDto: CreateCaminhaoDto) {
+    return this.caminhoesService.create(createCaminhaoDto);
   }
 
   @Get()
