@@ -12,10 +12,12 @@ import { Motorista } from '../../motoristas/entities/motorista.entity';
 import { Viagem } from '../../viagens/entities/viagem.entity';
 import { Pneu } from '../../pneus/entities/pneu.entity';
 import { Manutencao } from '../../manutencoes/entities/manutencao.entity';
+import { Exclude } from 'class-transformer';
 
 
 @Entity('caminhao')
 export class Caminhao {
+  @Exclude()
   @ApiProperty({
     description: 'ID único do caminhão',
     example: 1,
@@ -39,6 +41,7 @@ export class Caminhao {
   @Column({ type: 'varchar', nullable: true })
   status: string | null;
 
+  @Exclude()
   @ApiPropertyOptional({
     description: 'ID do registro do CRLV vinculado',
     example: 3,
@@ -46,6 +49,7 @@ export class Caminhao {
   @Column({ type: 'integer', nullable: true })
   crlv_id: number | null;
 
+  @Exclude()
   @ApiPropertyOptional({
     description: 'ID do motorista responsável',
     example: 12,
