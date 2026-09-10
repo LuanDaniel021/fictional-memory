@@ -3,6 +3,7 @@ import { Entity, Column } from "typeorm";
 import { Crlv } from "./crlv.entity";
 import { Pneu } from "./pneu.entity";
 import { Motorista } from "./motorista.entity";
+
 @Entity()
 export class Caminhao {
     
