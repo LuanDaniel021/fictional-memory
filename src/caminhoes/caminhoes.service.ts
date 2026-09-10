@@ -41,17 +41,10 @@ export class CaminhoesService {
     const { data, error } = await this.supabase.getClient()
       .from('caminhao')
       .select(`
-        km_atual, status,
-        crlv!inner(
-          uf, crv, tipo, marca, placa, chassi, modelo,
-          especie, renavam, exercicio, ano_modelo, ano_fabricacao
-        ),
-        motorista(
-          nome, cpf, numero_cnh, categoria_cnh
-        ),
-        pneu(
-          marca, status, posicao, sulco_inicial_mm
-        )
+        *,
+        crlv!inner( * ),
+        motorista( * ),
+        pneu( * )
       `)
 
     if (error) {
