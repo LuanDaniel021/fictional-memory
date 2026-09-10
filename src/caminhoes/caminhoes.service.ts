@@ -9,7 +9,7 @@ export class CaminhoesService {
   constructor(
     private readonly supabase: SupabaseService,
     private readonly crlvService: CrlvService
-  ) { }
+  ) {}
 
   async create(dto: CreateCaminhaoDto) {
     const crlv = await this.crlvService.create(dto.crlv);
@@ -41,17 +41,26 @@ export class CaminhoesService {
     const { data, error } = await this.supabase.getClient()
       .from('caminhao')
       .select(`
-        *,
-        crlv!inner( * ),
-        motorista( * ),
-        pneu( * )
+        km_atual, status,
+        crlv!inner(
+          uf, crv, tipo, marca, placa, chassi, modelo,
+          especie, renavam, exercicio, ano_modelo, ano_fabricacao
+        ),
+        motorista(
+          nome, cpf, numero_cnh, categoria_cnh
+        ),
+        pneu(
+          marca, status, posicao, sulco_inicial_mm
+        )
       `)
 
     if (error) {
       throw error;
     }
 
-    return data;
+    return {
+      mensagem: 'Caminhoes encontrados com sucesso!', data
+    }
   }
 
   async findPlate(plate: string) {
