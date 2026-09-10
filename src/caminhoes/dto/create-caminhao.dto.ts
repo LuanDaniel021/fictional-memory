@@ -1,11 +1,16 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNumber, IsOptional, IsString } from "class-validator";
+import { Crlv } from "../entities/crlv.entity";
+import { Motorista } from "../entities/motorista.entity";
+import { Pneu } from "../entities/pneu.entity";
 
 export class CreateCaminhaoDto {
 
+    @IsNumber()
     @ApiProperty({ example: '1000' })
     km_atual: number
 
+    @IsString()
     @ApiProperty({ example: 'Ativo' })
     status: string
 
@@ -25,7 +30,7 @@ export class CreateCaminhaoDto {
         "ano_fabricacao": 2021
       }
     })
-    crlv: object
+    crlv: Crlv
 
     @ApiProperty({
       example: {
@@ -35,7 +40,7 @@ export class CreateCaminhaoDto {
         "categoria_cnh": "C"
       }
     })
-    motorista: object
+    motorista: Motorista
 
     @ApiProperty({
       example: [{
@@ -45,5 +50,5 @@ export class CreateCaminhaoDto {
         "pressao": 8.5
       }]
     })
-    pneus: []
+    pneus: Pneu[]
 }
