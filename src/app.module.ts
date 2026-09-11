@@ -14,6 +14,7 @@ import { ManutencoesModule } from './manutencoes/manutencoes.module';
 import { MedicaoPneusModule } from './medicao_pneus/medicao_pneus.module';
 import { ViagensModule } from './viagens/viagens.module';
 import { CrlvsModule } from './crlvs/crlvs.module';
+import { FipeModule } from './fipe/fipe.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { CrlvsModule } from './crlvs/crlvs.module';
     MedicaoPneusModule,
     ViagensModule,
     CrlvsModule,
+    FipeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
