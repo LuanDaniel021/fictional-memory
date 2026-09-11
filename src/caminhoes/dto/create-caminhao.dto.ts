@@ -16,9 +16,10 @@ export class CreateCaminhaoDto {
   @ApiProperty({ example: 1000 })
   km_atual: number;
 
+  @IsOptional()
   @IsString()
-  @ApiProperty({ example: 'Ativo' })
-  status: string;
+  @ApiProperty({ example: 'Ativo', required: false })
+  status?: string;
 
   @ValidateNested()
   @Type(() => CreateCrlvDto)
