@@ -3,12 +3,14 @@ import { CreateCaminhaoDto } from './dto/create-caminhao.dto';
 import { UpdateCaminhaoDto } from './dto/update-caminhao.dto';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CrlvService } from '../crlvs/crlvs.service';
+import { PneusService } from '../pneus/pneus.service';
 
 @Injectable()
 export class CaminhoesService {
   constructor(
     private readonly supabase: SupabaseService,
     private readonly crlvService: CrlvService,
+    private readonly pneuService: PneusService,
   ) {}
 
   private calculaStatus(motoristaId?: number | null, pneus?: number[] | null): string {
@@ -19,13 +21,17 @@ export class CaminhoesService {
   }
 
   async create(dto: CreateCaminhaoDto) {
+
+    if ( await this.pneuService.containsAll(dto.pneus) ) {
+        throw new NotFoundException('Um ou mais pneus informados não existem!');
+    }
+
     const crlv = await this.crlvService.create(dto.crlv);
-    const status = this.calculaStatus(dto.motorista_id, dto.pneus);
 
     const payload: Record<string, any> = {
       km_atual: dto.km_atual,
       crlv_id: crlv.id,
-      status,
+      status: this.calculaStatus(dto.motorista_id, dto.pneus),
       motorista_id: dto.motorista_id ?? null,
     };
 
@@ -174,13 +180,17 @@ export class CaminhoesService {
   }
 
   async remove(placa: string) {
-    const crlv = await this.crlvService.findOneByPlate(placa);
+
+    const caminhao = await this.findOneByPlate(placa);
+
+    await this.pneuService.updatePneusCaminhaoId(caminhao.data.pneus, null);
+    
     const { error } = await this.supabase.getClient()
       .from('caminhao')
       .delete()
-      .eq('crlv_id', crlv.id);
+      .eq('id', caminhao.data.id);
 
-    await this.crlvService.remove(crlv.id);
+    await this.crlvService.remove(caminhao.data.crlv_id);
 
     if (error) {
       throw error;
