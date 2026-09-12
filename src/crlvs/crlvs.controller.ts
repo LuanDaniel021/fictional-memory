@@ -22,16 +22,16 @@ export class CrlvController {
 		return this.crlvService.findOneByPlate(plate);
 	}
 
-	@Patch(':id')
+	@Patch(':plate')
 	update(
-		@Param('id', ParseIntPipe) id: number,
+		@Param('plate') placa: string,
 		@Body() dto: UpdateCrlvDto,
 	) {
-		return this.crlvService.update(id, dto);
+		return this.crlvService.updateByPlate(placa, dto);
 	}
 
-	@Delete(':id')
-	remove(@Param('id', ParseIntPipe) id: number) {
-		return this.crlvService.remove(id);
+	@Delete(':plate')
+	remove(@Param('plate') placa: string) {
+		return this.crlvService.removeByPlate(placa);
 	}
 }

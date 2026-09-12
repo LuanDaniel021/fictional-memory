@@ -58,7 +58,7 @@ export class CrlvService {
     return data;
   }
 
-  async update(id: number, updateCrlvDto: UpdateCrlvDto): Promise<Crlv> {
+  async updateById(id: number, updateCrlvDto: UpdateCrlvDto): Promise<Crlv> {
     const { data, error } = await this.supabase.getClient()
       .from('crlv')
       .update(updateCrlvDto)
@@ -71,12 +71,37 @@ export class CrlvService {
     return data;
   }
 
-  async remove(id: number): Promise<void> {
+  async updateByPlate(placa: string, updateCrlvDto: UpdateCrlvDto): Promise<Crlv> {
+    const { data, error } = await this.supabase.getClient()
+      .from('crlv')
+      .update(updateCrlvDto)
+      .eq('placa', placa)
+      .select('*')
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new NotFoundException('CRLV não encontrado');
+    return data;
+  }
+
+  async removeById(id: number): Promise<void> {
     const { data, error } = await this.supabase.getClient()
       .from('crlv')
       .delete()
       .eq('id', id)
       .select('id')
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new NotFoundException('CRLV não encontrado');
+  }
+
+  async removeByPlate(placa: string): Promise<void> {
+    const { data, error } = await this.supabase.getClient()
+      .from('crlv')
+      .delete()
+      .eq('placa', placa)
+      .select('placa')
       .maybeSingle();
 
     if (error) throw error;

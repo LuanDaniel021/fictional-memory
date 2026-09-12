@@ -1,3 +1,4 @@
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCaminhaoDto } from './dto/create-caminhao.dto';
 import { UpdateCaminhaoDto } from './dto/update-caminhao.dto';
@@ -22,8 +23,16 @@ export class CaminhoesService {
 
   async create(dto: CreateCaminhaoDto) {
 
-    if ( await this.pneuService.containsAll(dto.pneus) ) {
-        throw new NotFoundException('Um ou mais pneus informados não existem!');
+    if (dto.pneus) {
+
+      if (dto.pneus.length !== 0) {
+        
+        if (!(await this.pneuService.containsAll(dto.pneus))) {
+          throw new NotFoundException('Um ou mais pneus informados não existem!');
+        }
+
+      }
+
     }
 
     const crlv = await this.crlvService.create(dto.crlv);
@@ -183,14 +192,14 @@ export class CaminhoesService {
 
     const caminhao = await this.findOneByPlate(placa);
 
-    await this.pneuService.updatePneusCaminhaoId(caminhao.data.pneus, null);
+    await this.pneuService.updatePneusCaminhaoId(caminhao.data.pneu, null);
     
     const { error } = await this.supabase.getClient()
       .from('caminhao')
       .delete()
       .eq('id', caminhao.data.id);
 
-    await this.crlvService.remove(caminhao.data.crlv_id);
+    await this.crlvService.removeById(caminhao.data.crlv_id);
 
     if (error) {
       throw error;

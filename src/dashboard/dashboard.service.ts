@@ -84,7 +84,6 @@ export class DashboardService {
     }
 
     return {
-      crlvs_vencidos: 0,
       ipvas_pendentes: ipvas.filter((i): i is Ipva => i.status === 'pendente').length,
     };
 

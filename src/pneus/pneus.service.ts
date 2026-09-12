@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreatePneuDto } from './dto/create-pneus.dto';
 import { UpdatePneuDto } from './dto/update-pneus.dto';
+import { Pneu } from './entities/pneu.entity';
 
 @Injectable()
 export class PneusService {
@@ -66,10 +67,11 @@ export class PneusService {
         if (!data) throw new NotFoundException('Pneu não encontrado');
     }
 
-    async containsAll(pneus: number[] | undefined): Promise<boolean> {
-        if (!pneus || pneus.length === 0) {
-            return true;
+    async containsAll(pneus: number[]): Promise<boolean> {
+        if (pneus.length === 0) {
+            return false;
         }
+
         const { data, error } = await this.supabase.getClient()
             .from('pneu')
             .select('id')
@@ -79,7 +81,7 @@ export class PneusService {
             throw error;
         }
 
-        return data.length !== pneus.length;
+        return data.length === pneus.length;
     }
 
     async findByIds(pneus: number[]): Promise<any[]> {
@@ -106,11 +108,11 @@ export class PneusService {
         }
     }
 
-    async updatePneusCaminhaoId(pneus: number[], caminhaoId: number | null): Promise<void> {
+    async updatePneusCaminhaoId(pneus: Pneu[], caminhaoId: number | null): Promise<void> {
         const { error } = await this.supabase.getClient()
             .from('pneu')
             .update({ caminhao_id: caminhaoId })
-            .in('id', pneus);
+            .in('id', pneus.map((p) => p.id));
 
         if (error) {
             throw error;
