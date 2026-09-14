@@ -12,7 +12,7 @@ export class UsersService {
     const client = this.supabase.getClient();
     const { error } = await client.auth.signUp({
       email: dto.email,
-      password: dto.password,
+      password: dto.senha,
       options: {
         data: {
           nome: dto.nome,
@@ -28,7 +28,7 @@ export class UsersService {
   }
 
   async login(dto: LoginUserDto) {
-    const { email, password } = dto;
+    const { email, senha: password } = dto;
     const client = this.supabase.getClient();
     const { data, error } = await client.auth.signInWithPassword({email, password});
     if (error) {
@@ -44,7 +44,7 @@ export class UsersService {
     const client = this.supabase.getClient();
     const { error } = await client.auth.admin.updateUserById(id, {
       email: dto.email,
-      password: dto.password,
+      password: dto.senha,
       email_confirm: true,
       user_metadata: {
         nome: dto.nome,
