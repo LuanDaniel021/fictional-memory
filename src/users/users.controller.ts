@@ -38,14 +38,14 @@ export class UsersController {
 
   @Post("confirm-new-role/:id")
   @UseGuards(SupabaseAuthGuard, RolesGuard)
-  @Roles('admin')
+  @Roles('Admin')
   confirm_new_role( @Req() request: Request & { user: User }, @Param("id") id : string ) {
     return "confirmado"
   }
 
   @Post("reject-new-role/:id")
   @UseGuards(SupabaseAuthGuard, RolesGuard)
-  @Roles('admin')
+  @Roles('Admin')
   reject_new_role( @Req() request: Request & { user: User }, @Param("id") id : string ) {
     return "this.usersService.confirm_new_role( id )";
   }

@@ -31,8 +31,6 @@ export class UsersService {
       this.email_confirm( data.user );
     }
 
-    this.confirm_new_role(data.user.id, "ADM")
-
     return {
       mensagem: 'Usuário cadastrado com sucesso!',
     };
