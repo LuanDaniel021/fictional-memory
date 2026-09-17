@@ -12,6 +12,21 @@ import { ROLES_KEY } from '../decorators/roles.decorator';
 export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
+  private resolveUserRole(user?: User): string | null {
+    const candidates = [
+      user?.app_metadata?.role,
+      user?.role,
+      user?.user_metadata?.role,
+    ];
+
+    const role = candidates.find(
+      (candidate): candidate is string =>
+        typeof candidate === 'string' && candidate.trim().length > 0,
+    );
+
+    return role ? role.trim().toLowerCase() : null;
+  }
+
   canActivate(context: ExecutionContext): boolean {
     const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
       context.getHandler(),
@@ -23,9 +38,10 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest<{ user?: User }>();
-    const userRole = request.user?.role;
+    const userRole = this.resolveUserRole(request.user);
+    const normalizedRequiredRoles = requiredRoles.map((role) => role.trim().toLowerCase());
 
-    if (!userRole || !requiredRoles.includes(userRole)) {
+    if (!userRole || !normalizedRequiredRoles.includes(userRole)) {
       throw new ForbiddenException('Usuário sem permissão para esta operação');
     }
 
