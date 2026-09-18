@@ -19,7 +19,7 @@ export class AdminUpdateUserDto {
   nome?: string;
 
   @IsOptional()
-  @IsEnum(['User', 'admin'])
-  @ApiPropertyOptional({ example: 'admin', enum: ['User', 'admin'] })
-  role?: 'User' | 'admin';
+  @IsEnum(['User', 'Admin'])
+  @ApiPropertyOptional({ example: 'Admin', enum: ['User', 'Admin'] })
+  role?: 'User' | 'Admin';
 }
