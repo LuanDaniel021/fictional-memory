@@ -2,10 +2,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { SupabaseService } from '../../supabase/supabase.service';
-import { CreateMedicaoDto } from './domains/dto/create-medicoes.dto';
+import { CreateMedicaoDto } from './dto/create-medicao.dto';
 import { PneusService } from '../pneus/pneus.service';
 
-import { Calculo } from './domains/dto/calculo-medicoes.service'
+import { Calculo } from '../../medicoes/domains/dto/calculo-medicoes.service'
 
 @Injectable()
 export class MedicoesService {

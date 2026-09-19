@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { MedicoesService } from './medicoes.service';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateMedicaoDto } from './domains/dto/create-medicoes.dto';
+import { CreateMedicaoDto } from './dto/create-medicao.dto';
 
 @ApiTags('Mediçoes')
 @Controller('pneus/:pid/medicoes')

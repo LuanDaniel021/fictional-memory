@@ -8,6 +8,9 @@ import { SupabaseAuthModule } from './supabase/supabase.auth.module';
 import { MotoristasModule } from './modules/motoristas/motoristas.module';
 import { CondicoesModule } from './modules/condicoes/condicoes.module';
 import { TemplatesModule } from './modules/templates/templates.module';
+import { AlocacoesModule } from './modules/alocacoes/alocacoes.module';
+import { ViagensModule } from './modules/viagens/viagens.module';
+import { MedicoesModule } from './modules/medicoes/medicoes.module';
 
 import { DashboardModule }    from './modules/dashboard/dashboard.module';
 
@@ -33,21 +36,18 @@ import { CrlvsModule }        from './modules/crlvs/crlvs.module';
     VeiculosModule,
     IpvasModule,
     CrlvsModule,
-    // Template
-    // Motorista
+    TemplatesModule,
+    MotoristasModule,
 
-    // Alocacoes
+    AlocacoesModule,
 
-    // ViagensModule,
+    ViagensModule,
 
     PneusModule,
-    // medicoes
-    // condicoes
-
-    ManutencoesModule,
-    MotoristasModule,
+    MedicoesModule,
     CondicoesModule,
-    TemplatesModule,
+
+    ManutencoesModule,    
   ],
   controllers: [AppController],
   providers: [AppService],
