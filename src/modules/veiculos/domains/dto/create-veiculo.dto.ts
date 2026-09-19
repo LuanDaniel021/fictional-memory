@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsNumber, IsOptional, IsString, ValidateNested, IsInt, IsArray, ArrayUnique } from "class-validator";
-import { CreateCrlvDto } from "../crlvs/dto/create-crlv.dto";
+import { CreateCrlvDto } from "../../../crlvs/dto/create-crlv.dto";
 
 
 

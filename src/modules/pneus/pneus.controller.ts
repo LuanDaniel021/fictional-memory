@@ -1,8 +1,10 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { PneusService } from './pneus.service';
-import { CreatePneuDto } from './domains/dto/create-pneus.dto';
-import { UpdatePneuDto } from './domains/dto/update-pneus.dto';
+import { CreatePneuDto } from './dto/create-pneus.dto';
+import { UpdatePneuDto } from './dto/update-pneus.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Pneus')
 @Controller('pneus')
 export class PneusController {
   constructor(private readonly pneusService: PneusService) {}
@@ -18,8 +20,8 @@ export class PneusController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.pneusService.findOne(id);
+  findOneById(@Param('id') id: string) {
+    return this.pneusService.findOneById(id);
   }
 
   @Patch(':id')

@@ -3,6 +3,7 @@ import { VeiculosService } from './veiculos.service';
 
 import { CreateVeiculoDto } from './domains/dto/create-veiculo.dto';
 import { UpdateVeiculoDto } from './domains/dto/update-veiculo.dto';
+import { Pneu } from '../pneus/entities/pneu.entity';
 
 @Controller('veiculos')
 export class VeiculosController {
@@ -10,11 +11,9 @@ export class VeiculosController {
   constructor(private readonly veiculosService: VeiculosService) {}
 
   @Post()
-  create(
-    @Body() createCaminhaoDto: CreateVeiculoDto
-  )
+  create( @Body() dto: CreateVeiculoDto )
   {
-    return this.veiculosService.create(createCaminhaoDto);
+    return this.veiculosService.create(dto);
   }
 
   @Get()
@@ -24,36 +23,27 @@ export class VeiculosController {
   }
 
   @Get(':plate')
-  findOneByPlate(
-    @Param('plate') placa: string
-  )
+  findOneByPlate( @Param('plate') placa: string )
   {
     return this.veiculosService.findOneByPlate(placa);
   }
 
   @Patch(':plate')
-  update(
-    @Param('plate') placa: string,
-    @Body() updateCaminhoeDto: UpdateVeiculoDto
-  )
+  update( @Param('plate') placa: string, @Body() dto: UpdateVeiculoDto )
   {
-    return this.veiculosService.update(placa, updateCaminhoeDto);
+    return this.veiculosService.update(placa, dto);
   }
 
   @Delete(':plate')
-  remove(
-    @Param('plate') placa: string
-  )
+  remove( @Param('plate') placa: string )
   {
     return this.veiculosService.remove(placa);
   }
 
   @Post(':plate/instalar')
-  instalar(
-    @Param('plate') placa: string
-  )
+  instalacao( @Param('plate') placa: string )
   {
-    // criar
+    return this.veiculosService.instalacao(placa, [ { posicao: {}, pneu: {} as Pneu } ]);
   }
 
 }

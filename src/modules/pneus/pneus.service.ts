@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { SupabaseService } from '../../supabase/supabase.service';
-import { CreatePneuDto } from './domains/dto/create-pneus.dto';
-import { UpdatePneuDto } from './domains/dto/update-pneus.dto';
-import { Pneu } from './domains/entities/pneu.entity';
+import { CreatePneuDto } from './dto/create-pneus.dto';
+import { UpdatePneuDto } from './dto/update-pneus.dto';
+import { Pneu } from './entities/pneu.entity';
 
 @Injectable()
 export class PneusService {
@@ -30,15 +30,19 @@ export class PneusService {
         return data ?? [];
     }
 
-    async findOne(id: number) {
+    async findOneById(id: string): Promise<Pneu>
+    {
         const { data, error } = await this.supabase.getClient()
             .from('pneu')
-            .select('*')
+            .select<string,Pneu>('*')
             .eq('id', id)
             .maybeSingle();
 
-        if (error) throw error;
-        if (!data) throw new NotFoundException('Pneu não encontrado');
+        if ( !data )
+        {
+           throw error ? error : new NotFoundException(`Pneu não encontrado.`);
+        }
+
         return data;
     }
 
