@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { MedicoesService } from './medicoes.service';
 
-@Controller('medicoes')
+@Controller('pneus/medicoes')
 export class MedicoesController {
 
   constructor(private readonly medicaoPneusService: MedicoesService) {}

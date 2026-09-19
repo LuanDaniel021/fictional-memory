@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { SupabaseService } from '../../../../supabase/supabase.service';
-import { CreatePneuDto } from './dto/create-pneus.dto';
-import { UpdatePneuDto } from './dto/update-pneus.dto';
-import { Pneu } from './entities/pneu.entity';
+import { SupabaseService } from '../../supabase/supabase.service';
+import { CreatePneuDto } from './domains/dto/create-pneus.dto';
+import { UpdatePneuDto } from './domains/dto/update-pneus.dto';
+import { Pneu } from './domains/entities/pneu.entity';
 
 @Injectable()
 export class PneusService {

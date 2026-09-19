@@ -3,79 +3,83 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { SupabaseService } from '../../../../supabase/supabase.service';
 
-import { Calculo, Inicial, Final } from './calculo/calculo.service'
+import { Calculo } from './calculo/calculo.service'
 
-export class MDTO {
-    constructor(
-        readonly pneu: { id: number },
-        readonly km: number,
-        readonly psi: number,
-        readonly sulco: number
-    ) {}
-}
+import { Medicao } from './medicao.interface';
 
 @Injectable()
 export class MedicoesService {
 
     constructor(private readonly supabase: SupabaseService) {}
 
-    async medicao( dto: MDTO ): Promise<object>
+    async medicao( atual: Medicao & { pneu : { id  : string } } ): Promise<object>
     {
         const client = this.supabase.getClient();
 
-        const { data: condicao, error: condError } = await client
-            .from('condicoes')
-            .select('id, pneu, medicoes:medicao (km, sulco)')
-            .eq('pneu', dto.pneu.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle();
+        const { data: pneu, error: e1 } = await client
+            .from('pneus')
+            .select()
+            .eq('id', atual.pneu.id)
+            .single();
 
-        if (condError || !condicao) {
-            throw new Error(`Não foi possível carregar o histórico do pneu ID ${dto.pneu.id}.`);
+        if ( !pneu )
+        {
+           throw e1 ? e1 : new NotFoundException(`Não foi possível encontrar o pneu ID ${atual.pneu.id}.`);
         }
 
-        const inicial = new Inicial(condicao.medicoes[0].km, condicao.medicoes[0].sulco);
-        const final = new Final(dto.km, dto.sulco);
-        const calculo = new Calculo(inicial, final);
+        const { data: anterior, error: e2 } = await client
+            .from('medicoes')
+            .select('km, sulco, pressao')
+            .eq('pneu', atual.pneu.id)
+            .order('km', { ascending: false })
+            .limit(1)
+            .single();
 
-        const pctDesgaste = calculo.porcentual();
+        if ( !anterior )
+        {
+            throw e2 ? e2 : new NotFoundException(`Não foi possível encontrar a ultima medicão.`);
+        }
+
+        const calculo = new Calculo(atual, anterior);
 
         const result = {
             taxa: calculo.taxa(),
             desgaste: calculo.desgaste(),
             distancia: calculo.distancia(),
-            porcentual: pctDesgaste
+            porcentual: calculo.porcentual()
         };
 
-        const { data: medicao, error: medError } = await client
+        const { data: medicao, error: e3 } = await client
             .from('medicoes')
             .insert({
-                km: dto.km,
-                sulco: dto.sulco,
-                pressao: dto.psi
+                km: atual.km,
+                sulco: atual.sulco,
+                pressao: atual.pressao
             })
             .select('id')
             .single();
 
-        if (medError || !medicao) {
-            throw new Error(`Erro ao inserir medição: ${medError?.message}`);
+        if ( !medicao )
+        {
+            throw e3 ? e3 : new Error(`Não foi possível registrar a medicão.`);
         }
 
-        const estado = pctDesgaste <= 30 ? 'Bom' : pctDesgaste <= 70 ? 'Alerta' : 'Ruim';
+        const estado = result.porcentual <= 30 ? 'Bom' : result.porcentual <= 70 ? 'Alerta' : 'Ruim';
 
-        const { error: condInsertError } = await client
+        const { data: condicao, error: e4 } = await client
             .from('condicoes')
             .insert({
-                pneu_id: dto.pneu.id,
                 estado: estado,
-                medicao_id: medicao.id,
-                km: dto.km,
-                sulco: dto.sulco
-            });
+                medicao: medicao.id,
+                km: atual.km,
+                sulco: atual.sulco
+            })
+            .select()
+            .single()
 
-        if (condInsertError) {
-            throw new Error(`Erro ao registrar condição: ${condInsertError.message}`);
+        if ( !condicao )
+        {
+            throw e4 ? e4 : new Error(`Não foi possível registrar a condicão.`);
         }
 
         return result;

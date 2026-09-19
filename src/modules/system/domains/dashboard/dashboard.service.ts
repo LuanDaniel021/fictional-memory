@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseService } from '../../../../supabase/supabase.service';
-import { Caminhao } from '../caminhoes/entities/caminhao.entity';
-import { Pneu } from '../pneus/entities/pneu.entity';
+import { Veiculo } from '../../../veiculos/domains/entities/veiculo.entity'
+import { Pneu } from '../../../pneus/domains/entities/pneu.entity';
 import { Manutencao } from '../manutencoes/entities/manutencao.entity';
-import { Crlv } from '../crlvs/entities/crlv.entity';
-import { Ipva } from '../ipvas/entities/ipva.entity';
+import { Crlv } from '../../../veiculos/domains/crlvs/entities/crlv.entity';
+import { Ipva } from '../../../veiculos/domains/ipvas/entities/ipva.entity';
 
 type Viagem = {
   data_inicio: string | null;
@@ -27,7 +27,7 @@ export class DashboardService {
   async getCaminhoes() {
     const { data, error } = await this.supabase.getClient()
       .from('caminhao')
-      .select<string,Caminhao>('*')
+      .select<string,Veiculo>('*')
     
     if (error) {
       throw error;
@@ -35,8 +35,8 @@ export class DashboardService {
 
     return {
       total: data.length,
-      ativos: data.filter((c): c is Caminhao => c.status === 'ativo').length,
-      inativos: data.filter((c): c is Caminhao => c.status === 'inativo').length,
+      ativos: data.filter((c): c is Veiculo => c.status === 'ativo').length,
+      inativos: data.filter((c): c is Veiculo => c.status === 'inativo').length,
     };
   }
 

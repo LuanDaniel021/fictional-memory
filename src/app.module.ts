@@ -10,12 +10,13 @@ import { DashboardModule }    from './modules/system/domains/dashboard/dashboard
 
 import { UsersModule }        from './modules/users/users.module';
 import { AdminModule }        from './modules/users/admin/admin.module';
-import { CaminhoesModule }    from './modules/system/domains/caminhoes/caminhoes.module';
-import { PneusModule }        from './modules/system/domains/pneus/pneus.module';
-import { IpvasModule }        from './modules/system/domains/ipvas/ipvas.module';
+import { VeiculosModule }    from './modules/veiculos/veiculos.module';
+import { PneusModule }        from './modules/pneus/pneus.module';
+import { IpvasModule }        from './modules/veiculos/domains/ipvas/ipvas.module';
 import { ManutencoesModule }  from './modules/system/domains/manutencoes/manutencoes.module';
-import { CrlvsModule }        from './modules/system/domains/crlvs/crlvs.module';
+import { CrlvsModule }        from './modules/veiculos/domains/crlvs/crlvs.module';
 import { FipeModule }         from './modules/system/domains/fipe/fipe.module';
+import { MedicoesModule } from './modules/pneus/domains/medicoes/medicoes.module';
 
 @Module({
   imports: [
@@ -25,8 +26,9 @@ import { FipeModule }         from './modules/system/domains/fipe/fipe.module';
     AdminModule,
     SupabaseModule,
     DashboardModule,
-    CaminhoesModule,
+    VeiculosModule,
     PneusModule,
+    MedicoesModule,
     IpvasModule,
     ManutencoesModule,
     CrlvsModule,

@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { PneusService } from './pneus.service';
-import { CreatePneuDto } from './dto/create-pneus.dto';
-import { UpdatePneuDto } from './dto/update-pneus.dto';
+import { CreatePneuDto } from './domains/dto/create-pneus.dto';
+import { UpdatePneuDto } from './domains/dto/update-pneus.dto';
 
 @Controller('pneus')
 export class PneusController {

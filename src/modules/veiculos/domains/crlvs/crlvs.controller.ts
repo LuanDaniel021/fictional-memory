@@ -3,7 +3,7 @@ import { CreateCrlvDto } from './dto/create-crlv.dto';
 import { UpdateCrlvDto } from './dto/update-crlv.dto';
 import { CrlvService } from './crlvs.service';
 
-@Controller('crlvs')
+@Controller('veiculos/crlvs')
 export class CrlvController {
 	constructor(private readonly crlvService: CrlvService) {}
 
