@@ -6,32 +6,39 @@ import { SupabaseService } from '../../supabase/supabase.service';
 
 @Injectable()
 export class CrlvService {
+
   constructor( private readonly supabase: SupabaseService ) {}
   
   async create(dto: CreateCrlvDto) : Promise<Crlv> {
     const { data, error } = await this.supabase.getClient()
-      .from('crlv')
+      .from('crlvs')
       .insert(dto)
       .select<string, Crlv>()
       .single()
-    
-    if (error) throw error;
+
+    if (!data) {
+      throw error ? error : new Error('Erro ao criar Crlv.');
+    }
 
     return data;
   }
 
-  async findAll(): Promise<Crlv[]> {
+  async findAll(): Promise<Crlv[]>
+  {
     const { data, error } = await this.supabase.getClient()
-      .from('crlv')
-      .select('*');
+      .from('crlvs')
+      .select();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
+
     return data ?? [];
   }
 
   async findOneById(id: number): Promise<Crlv> {
     const { data, error } = await this.supabase.getClient()
-      .from('crlv')
+      .from('crlvs')
       .select('*')
       .eq('id', id)
       .maybeSingle();
@@ -43,7 +50,7 @@ export class CrlvService {
 
   async findOneByPlate(placa: string): Promise<Crlv> {
     const { data, error } = await this.supabase.getClient()
-      .from('crlv')
+      .from('crlvs')
       .select('*')
       .eq('placa', placa)
       .maybeSingle();

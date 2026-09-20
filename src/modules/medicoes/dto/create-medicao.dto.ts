@@ -1,6 +1,6 @@
 
+import { Medicao } from '../entities/medicao.entity'
+
 export class CreateMedicaoDto {
-    km     : number;
-    sulco  : number;
-    pressao: number;
+    data : Medicao
 }

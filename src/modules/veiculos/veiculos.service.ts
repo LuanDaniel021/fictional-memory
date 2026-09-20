@@ -7,184 +7,175 @@ import { UpdateVeiculoDto } from './domains/dto/update-veiculo.dto';
 
 import { CrlvService } from '../crlvs/crlvs.service';
 import { PneusService } from '../pneus/pneus.service';
-import { Template } from "./template.service";
 import { Pneu } from "../pneus/entities/pneu.entity";
+import { TemplatesService } from "../templates/templates.service";
+
+import { Template } from '../templates/entities/template.entity'
+import { Veiculo } from "./domains/entities/veiculo.entity";
 
 @Injectable()
 export class VeiculosService {
 
-    constructor(
-        private readonly supabase: SupabaseService,
-        private readonly crlvService: CrlvService,
-        private readonly pneuService: PneusService,
-    ) {}
+  private readonly query = '*, crlv: crlvs!inner( * ), alocacoes( * ), template: templates( * )';
 
-    async create(dto: CreateVeiculoDto): Promise<object>
-    {
+  constructor(
+    private readonly supabase: SupabaseService,
+    private readonly templateService: TemplatesService,
+    private readonly crlvService: CrlvService,
+    private readonly pneuService: PneusService,
+  ) {}
 
-        const crlv = await this.crlvService.create(dto.crlv);
+  async create(dto: CreateVeiculoDto): Promise<Veiculo>
+  {
+    const template = await this.templateService.findOneByName(dto.template);
 
-        const payload: Record<string, any> = {
-            km_atual: dto.km_atual,
-            crlv_id: crlv.id,
-            motorista_id: dto.motorista_id ?? null,
-        };
+    const crlv = await this.crlvService.create(dto.crlv);
 
-        const { data: veiculo, error } = await this.supabase.getClient()
-            .from('veiculos')
-            .insert(payload)
-            .select('id')
-            .single();
+    const { data: veiculo, error } = await this.supabase.getClient()
+      .from('veiculos')
+      .insert({
+        km_atual: dto.km_atual,
+        crlv_id: crlv.id,
+        template_id: template.id
+      })
+      .select()
+      .limit(1)
+      .maybeSingle();
 
-        if (error) {
-            throw error;
-        }
-
-        if (dto.pneus?.length) {
-            const { error: pneusError } = await this.supabase.getClient()
-                .from('pneu')
-                .update({ caminhao_id: veiculo.id })
-                .in('id', dto.pneus);
-
-            if (pneusError) {
-                throw pneusError;
-            }
-        }
-
-        return veiculo;
+    if (!veiculo) {
+      await this.crlvService.removeById(crlv.id);
+      throw error ? error : new Error('Erro ao registrar veiculo.');
     }
 
-    async findAll() {
-        const { data, error } = await this.supabase.getClient()
-            .from('veiculos')
-            .select(`
-                *, crlv!inner( * ), motorista( * ), pneu_caminhao( * )
-            `);
+    return veiculo;
+  }
 
-        if (error) {
-            throw error;
-        }
+  async findAll(): Promise<Veiculo[]>
+  {
+    const { data, error } = await this.supabase.getClient()
+      .from('veiculos')
+      .select<string, Veiculo>(this.query);
 
-        return {
-            mensagem: 'Caminhoes encontrados com sucesso!',
-            data,
-        };
+    if (error) {
+      throw error;
     }
 
-    async findOneById(id: string) {
-        const { data, error } = await this.supabase.getClient()
-            .from('veiculos')
-            .select(`
-                *, crlv!inner( * ), motorista( * ), pneu( * )
-            `)
-            .eq('id', id)
-            .maybeSingle();
+    return data ?? []
+  }
 
-        if (error) {
-            throw error;
-        }
+  async findOneById(id: string)
+  {
+    const { data, error } = await this.supabase.getClient()
+      .from('veiculos')
+      .select(this.query)
+      .eq('id', id)
+      .maybeSingle();
 
-        if (!data) {
-            throw new NotFoundException('Caminhao não encontrado');
-        }
-
-        return data;
+    if (!data) {
+      throw error ? error : new NotFoundException('Veiculo não encontrado');
     }
 
-    async findOneByPlate(placa: string) {
-        const { data, error } = await this.supabase.getClient()
-            .from('veiculos')
-            .select(`
-        *, crlv!inner( * ), motorista( * ), pneu( * )
-        `)
-            .eq('crlv.placa', placa)
-            .maybeSingle();
+    return data;
+  }
 
-        if (!data)
-        {
-            throw error ? error : new NotFoundException('Veiculo não encontrado');
-        }
+  async findOneByPlate(placa: string): Promise<Veiculo>
+  {
+    const { data, error } = await this.supabase.getClient()
+      .from('veiculos')
+      .select<string, Veiculo>(this.query)
+      .eq('crlv.placa', placa)
+      .maybeSingle();
 
-        return data;
+    if (!data) {
+      throw error ? error : new NotFoundException('Veiculo não encontrado');
     }
 
-    async update(placa: string, dto: UpdateVeiculoDto): Promise<object>
-    {
-        const atual = await this.findOneByPlate(placa);
+    return data;
+  }
 
-        const { error } = await this.supabase.getClient()
-            .from('veiculos')
-            .update(dto)
-            .eq('crlv_id', atual.data.crlv_id);
+  async update(placa: string, dto: UpdateVeiculoDto): Promise<object>
+  {
+    const atual = await this.findOneByPlate(placa);
 
-        if (error) {
-            throw error;
-        }
+    const { error } = await this.supabase.getClient()
+      .from('veiculos')
+      .update(dto)
+      .eq('crlv_id', atual.crlv.id);
 
-        return {
-            mensagem: 'Caminhao atualizado com sucesso!',
-        };
+    if (error) {
+      throw error;
     }
 
-    async remove(placa: string): Promise<object>
-    {
+    return {
+      mensagem: 'Veiculo atualizado com sucesso!',
+    };
+  }
 
-        const veiculo = await this.findOneByPlate(placa);
+  async remove(placa: string): Promise<object>
+  {
 
-        await this.pneuService.updatePneusCaminhaoId(veiculo.data.pneu, null);
+    const veiculo = await this.findOneByPlate(placa);
 
-        const { error } = await this.supabase.getClient()
-            .from('veiculos')
-            .delete()
-            .eq('id', veiculo.data.id);
+    const { error: e1 } = await this.supabase.getClient()
+      .from('alocacoes')
+      .delete()
+      .eq('veiculo_id', veiculo.id);
 
-        await this.crlvService.removeById(veiculo.crlv_id);
-
-        if (error) {
-            throw error;
-        }
-
-        return {
-            mensagem: 'Caminhao removido com sucesso!',
-        };
+    if (e1) {
+      throw e1;
     }
 
-    async instalacao(placa : string, content: { posicao: {}, pneu: Pneu }[] ): Promise<void>
-    {
-        const client = this.supabase.getClient();
+    const { error: e2 } = await this.supabase.getClient()
+      .from('veiculos')
+      .delete()
+      .eq('id', veiculo.id);
 
-        const veiculo = await this.findOneByPlate(placa)
+    await this.crlvService.removeById(veiculo.crlv.id);
 
-        const template = new Template( veiculo.template.estrutura );
+    if (e2) {
+      throw e2;
+    }
 
-        for ( const p of content )
-        {
+    return {
+      mensagem: 'Veiculo removido com sucesso!',
+    };
+  }
 
-            const {data: pneu, error: e3 } = await client
-                .from('pneus')
-                .select()
-                .eq('id', p.pneu.id )
-                .single()
+  async instalacao(placa: string, content: { posicao: {}, pneu: Pneu }[]): Promise<void>
+  {
+    const client = this.supabase.getClient();
 
-            if ( !pneu ) {
-                throw e3 ? e3 : new Error('');
-            }
+    const veiculo = await this.findOneByPlate(placa);
 
-            if ( template.permite(0, 'E', 0) ) {
-                throw new Error('');
-            }
+    const template = veiculo.template;
 
-            const {data: alocacao, error: e4 } = await client
-                .from('alocacoes')
-                .insert( p )
-                .select()
-                .single()
-            
-            if ( !alocacao ) {
-                throw e4 ? e4 : new Error('');
-            }
+    for (const p of content) {
 
-        }
+      const { data: pneu, error: e3 } = await client
+        .from('pneus')
+        .select()
+        .eq('id', p.pneu.id)
+        .single()
+
+      if (!pneu) {
+        throw e3 ? e3 : new Error('');
+      }
+
+      if (template.permite(0, 'E', 0)) {
+        throw new Error('');
+      }
+
+      const { data: alocacao, error: e4 } = await client
+        .from('alocacoes')
+        .insert(p)
+        .select()
+        .single()
+
+      if (!alocacao) {
+        throw e4 ? e4 : new Error('');
+      }
 
     }
+
+  }
 }

@@ -4,9 +4,15 @@ import { VeiculosService } from "./veiculos.service";
 import { SupabaseModule } from "../../supabase/supabase.module";
 import { PneusModule } from "../pneus/pneus.module";
 import { CrlvsModule } from "../crlvs/crlvs.module";
+import { TemplatesModule } from "../templates/templates.module";
 
 @Module({
-    imports: [SupabaseModule, CrlvsModule, PneusModule],
+    imports: [
+        SupabaseModule,
+        CrlvsModule,
+        PneusModule,
+        TemplatesModule
+    ],
     controllers: [VeiculosController],
     providers: [VeiculosService],
 })

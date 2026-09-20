@@ -3,9 +3,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { SupabaseService } from '../../supabase/supabase.service';
 import { CreateMedicaoDto } from './dto/create-medicao.dto';
+import { Medicao } from './entities/medicao.entity';
 import { PneusService } from '../pneus/pneus.service';
 
-import { Calculo } from '../../medicoes/domains/dto/calculo-medicoes.service'
+import { Calculo } from './calculo-medicoes.service'
 
 @Injectable()
 export class MedicoesService {
@@ -15,7 +16,7 @@ export class MedicoesService {
         private readonly pneus    : PneusService
     ) {}
 
-    async create( pid: string, compare: 'anterior' | 'periodo', atual: CreateMedicaoDto ): Promise<object>
+    async create( pid: string, compare: 'anterior' | 'periodo', dto: CreateMedicaoDto ): Promise<object>
     {
         const client = this.supabase.getClient();
 
@@ -23,11 +24,13 @@ export class MedicoesService {
 
         let calculo;
 
+        const atual = dto.data;
+
         if ( compare === 'anterior') 
         {
             const { data: anterior, error: e1 } = await client
                 .from('medicoes')
-                .select('km, sulco, pressao')
+                .select<string,Medicao>('km, sulco, pressao')
                 .eq('pneu', pid)
                 .order('km', { ascending: false })
                 .limit(1)
@@ -44,7 +47,7 @@ export class MedicoesService {
         {
             const { data: periodo, error: e1 } = await client
                 .from('manutencoes')
-                .select<string,CreateMedicaoDto>('saida')
+                .select<string,Medicao>('saida')
                 .eq('pneu', pid)
                 .limit(1)
                 .single();

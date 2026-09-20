@@ -5,30 +5,36 @@ import { UpdateTemplateDto } from './dto/update-template.dto';
 
 @Controller('templates')
 export class TemplatesController {
+
   constructor(private readonly templatesService: TemplatesService) {}
 
   @Post()
-  create(@Body() createTemplateDto: CreateTemplateDto) {
-    return this.templatesService.create(createTemplateDto);
+  create(@Body() dto: CreateTemplateDto)
+  {
+    return this.templatesService.create(dto);
   }
 
   @Get()
-  findAll() {
+  findAll()
+  {
     return this.templatesService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.templatesService.findOne(+id);
+  findOne(@Param('id') id: string)
+  {
+    return this.templatesService.findOneById(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTemplateDto: UpdateTemplateDto) {
-    return this.templatesService.update(+id, updateTemplateDto);
+  update(@Param('id') id: string, @Body() dto: UpdateTemplateDto)
+  {
+    return this.templatesService.updateById(id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.templatesService.remove(+id);
+  remove(@Param('id') id: string)
+  {
+    return this.templatesService.removeById(id);
   }
 }
