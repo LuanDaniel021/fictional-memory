@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsNumber, IsString } from "class-validator"
+import { IsIn, IsNumber, IsString, Min } from "class-validator"
 
 export class CreateAlocacaoDto {
     
@@ -10,18 +10,21 @@ export class CreateAlocacaoDto {
     pneu : number
 
     @IsNumber()
+    @Min(0)
     @ApiProperty({
         example : 0
     })
     eixo : number
 
     @IsString()
+    @IsIn(['E', 'D'])
     @ApiProperty({
         example : 'E'
     })
     lado : 'E' | 'D'
     
     @IsNumber()
+    @Min(0)
     @ApiProperty({
         example : 0
     })

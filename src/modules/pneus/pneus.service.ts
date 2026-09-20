@@ -95,6 +95,10 @@ export class PneusService {
             throw error;
         }
 
+        if (data.length !== pneus.length) {
+            throw new NotFoundException('Nem todos os pneus foram encontrados.');
+        }
+
         return data;
     }
 

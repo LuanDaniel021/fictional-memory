@@ -37,7 +37,7 @@ export class AlocacoesService {
     const { data: alocacoesPneus } = await client
       .from('alocacoes')
       .select('*')
-      .in('pneu_id', pneuIds)
+      .in('pneu', pneuIds)
       .eq('ativa', true);
 
     const pneusEmOutrosVeiculos = (alocacoesPneus || []).filter(
@@ -54,7 +54,7 @@ export class AlocacoesService {
     const { data: alocacoesVeiculo } = await client
       .from('alocacoes')
       .select('*')
-      .eq('veiculo_id', veiculo.id)
+      .eq('veiculo', veiculo.id)
       .eq('ativa', true);
 
     const paraInativarIds: string[] = [];
@@ -63,7 +63,7 @@ export class AlocacoesService {
     for (const dto of dtos) {
       // Verifica se o pneu já está neste veículo em outra posição
       const alocacaoAtualPneu = alocacoesVeiculo?.find(
-        (a) => a.pneu_id === dto.pneu,
+        (a) => a.pneu === dto.pneu,
       );
 
       // Verifica quem ocupa a posição de destino desejada
@@ -85,8 +85,8 @@ export class AlocacoesService {
 
         // Mova o pneu de destino para a posição original do pneu recebido
         registrosParaSalvar.push({
-          veiculo_id: veiculo.id,
-          pneu_id: alocacaoNaPosicaoDestino.pneu_id,
+          veiculo: veiculo.id,
+          pneu: alocacaoNaPosicaoDestino.pneu_id,
           eixo: alocacaoAtualPneu.eixo,
           lado: alocacaoAtualPneu.lado,
           indice: alocacaoAtualPneu.indice,
@@ -102,12 +102,11 @@ export class AlocacoesService {
 
       // REGRA: Aloca o novo pneu/posição solicitada no DTO
       registrosParaSalvar.push({
-        veiculo_id: veiculo.id,
-        pneu_id: dto.pneu,
+        veiculo: veiculo.id,
+        pneu: dto.pneu,
         eixo: dto.eixo,
         lado: dto.lado,
         indice: dto.indice,
-        ativa: true,
       });
     }
 

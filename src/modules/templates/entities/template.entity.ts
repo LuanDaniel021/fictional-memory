@@ -6,11 +6,13 @@ export class Template {
   estrutura: string[]
 
   permite( eixo: number, lado: 'E' | 'D', indice: number ) {
-    const _eixo = this.estrutura[eixo].trim().split(' ');
+    const linha = this.estrutura[eixo]
 
-    if (!_eixo) {
+    if (!linha) {
       return false;
     }
+
+    const _eixo = linha.trim().split(' ');
 
     return (_eixo[{ 'E': 0, 'D': 1 }[lado]])[indice+1] !== undefined;
   }
