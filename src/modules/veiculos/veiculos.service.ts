@@ -139,41 +139,4 @@ export class VeiculosService {
     };
   }
 
-  async instalacao(placa: string, content: { posicao: {}, pneu: Pneu }[]): Promise<void>
-  {
-    const client = this.supabase.getClient();
-
-    const veiculo = await this.findOneByPlate(placa);
-
-    const template = veiculo.template;
-
-    for (const p of content) {
-
-      const { data: pneu, error: e3 } = await client
-        .from('pneus')
-        .select()
-        .eq('id', p.pneu.id)
-        .single()
-
-      if (!pneu) {
-        throw e3 ? e3 : new Error('');
-      }
-
-      if (template.permite(0, 'E', 0)) {
-        throw new Error('');
-      }
-
-      const { data: alocacao, error: e4 } = await client
-        .from('alocacoes')
-        .insert(p)
-        .select()
-        .single()
-
-      if (!alocacao) {
-        throw e4 ? e4 : new Error('');
-      }
-
-    }
-
-  }
 }

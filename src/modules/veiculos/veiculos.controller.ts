@@ -10,8 +10,8 @@ export class VeiculosController {
 
   constructor(private readonly veiculosService: VeiculosService) {}
 
-  @Post(':fipe')
-  create( @Param('fipe') fipe: boolean, @Body() dto: CreateVeiculoDto )
+  @Post()
+  create( @Body() dto: CreateVeiculoDto )
   {
     return this.veiculosService.create(dto);
   }
@@ -38,12 +38,6 @@ export class VeiculosController {
   remove( @Param('plate') placa: string )
   {
     return this.veiculosService.remove(placa);
-  }
-
-  @Post(':plate/instalar')
-  instalacao( @Param('plate') placa: string )
-  {
-    return this.veiculosService.instalacao(placa, [ { posicao: {}, pneu: {} as Pneu } ]);
   }
 
 }
