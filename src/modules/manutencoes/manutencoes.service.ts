@@ -9,7 +9,7 @@ export class ManutencoesService {
 
 	async create(dto: CreateManutencaoDto) {
 		const { data, error } = await this.supabase.getClient()
-			.from('manutencao')
+			.from('manutencoes')
 			.insert(dto)
 			.select('*')
 			.single();
@@ -21,7 +21,7 @@ export class ManutencoesService {
 
 	async findAll() {
 		const { data, error } = await this.supabase.getClient()
-			.from('manutencao')
+			.from('manutencoes')
 			.select('*');
 		if (error) throw error;
 		return data ?? [];
@@ -29,7 +29,7 @@ export class ManutencoesService {
 
 	async findOne(id: number) {
 		const { data, error } = await this.supabase.getClient()
-			.from('manutencao')
+			.from('manutencoes')
 			.select('*')
 			.eq('id', id)
 			.maybeSingle();
@@ -41,7 +41,7 @@ export class ManutencoesService {
 
 	async update(id: number, dto: UpdateManutencaoDto) {
 		const { data, error } = await this.supabase.getClient()
-			.from('manutencao')
+			.from('manutencoes')
 			.update(dto)
 			.eq('id', id)
 			.select('*')
@@ -53,7 +53,7 @@ export class ManutencoesService {
 
 	async remove(id: number) {
 		const { data, error } = await this.supabase.getClient()
-			.from('manutencao')
+			.from('manutencoes')
 			.delete()
 			.eq('id', id)
 			.select('id')
