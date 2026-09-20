@@ -17,7 +17,7 @@ export class Calculo {
 
     taxa(): number
     {
-        return this.distancia() / this.desgaste();
+        return this.desgaste() / this.distancia();
     }
 
     porcentual(): number

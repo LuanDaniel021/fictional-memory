@@ -20,7 +20,7 @@ export class PneusController {
   }
 
   @Get(':id')
-  findOneById(@Param('id') id: string) {
+  findOneById(@Param('id', ParseIntPipe) id: number) {
     return this.pneusService.findOneById(id);
   }
 

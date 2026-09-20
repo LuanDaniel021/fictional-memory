@@ -1,15 +1,15 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { CondicoesService } from './condicoes.service';
-import { CreateCondicoeDto } from './dto/create-condicoe.dto';
-import { UpdateCondicoeDto } from './dto/update-condicoe.dto';
+import { CreateCondicaoDto } from './dto/create-condicao.dto';
+import { UpdateCondicaoDto } from './dto/update-condicao.dto';
 
-@Controller('condicoes')
+@Controller('medicoes/:medicaoId/condicoes')
 export class CondicoesController {
   constructor(private readonly condicoesService: CondicoesService) {}
 
   @Post()
-  create(@Body() createCondicoeDto: CreateCondicoeDto) {
-    return this.condicoesService.create(createCondicoeDto);
+  create(@Param('medicaoId') medicaoId:number, @Body() dto: CreateCondicaoDto) {
+    return this.condicoesService.createWithMedicaoId(medicaoId, dto);
   }
 
   @Get()
@@ -23,7 +23,7 @@ export class CondicoesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCondicoeDto: UpdateCondicoeDto) {
+  update(@Param('id') id: string, @Body() updateCondicoeDto: UpdateCondicaoDto) {
     return this.condicoesService.update(+id, updateCondicoeDto);
   }
 

@@ -9,13 +9,19 @@ export class MedicoesController {
 
   constructor(private readonly medicaoPneusService: MedicoesService) {}
 
-  @Post(':compare')
+  @Post()
   create(
-    @Param('pneuId') pid: string,
-    @Param('compare') compare: 'anterior' | 'periodo',
+    @Param('pneuId') pid: number,
     @Body() dto: CreateMedicaoDto
   ) {
-    return this.medicaoPneusService.create(pid, compare, dto);
+    return this.medicaoPneusService.create(pid, dto);
+  }
+
+  @Post()
+  medicao(
+    @Param('pneuId') pid: number,
+  ) {
+    return this.medicaoPneusService.me(pid);
   }
 
   @Get(':id/medicoes')

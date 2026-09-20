@@ -3,9 +3,10 @@ import { MedicoesService } from './medicoes.service';
 import { MedicoesController } from './medicoes.controller';
 import { SupabaseModule } from '../../supabase/supabase.module';
 import { PneusModule } from '../pneus/pneus.module';
+import { CondicoesModule } from '../condicoes/condicoes.module';
 
 @Module({
-  imports: [SupabaseModule, PneusModule],
+  imports: [SupabaseModule, PneusModule, CondicoesModule],
   controllers: [MedicoesController],
   providers: [MedicoesService],
 })

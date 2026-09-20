@@ -6,59 +6,43 @@ import { CreateMedicaoDto } from './dto/create-medicao.dto';
 import { Medicao } from './entities/medicao.entity';
 import { PneusService } from '../pneus/pneus.service';
 
-import { Calculo } from './calculo-medicoes.service'
+import { Calculo } from './calculo-medicoes'
+import { CondicoesService } from '../condicoes/condicoes.service';
 
 @Injectable()
 export class MedicoesService {
 
     constructor(
-        private readonly supabase : SupabaseService,
-        private readonly pneus    : PneusService
-    ) {}
+        private readonly supabase: SupabaseService,
+        private readonly pneusService: PneusService,
+        private readonly condicoesService: CondicoesService,
+    ) {} 
 
-    async create( pid: string, compare: 'anterior' | 'periodo', dto: CreateMedicaoDto ): Promise<object>
+    async me( pid: number ): Promise<object>
     {
         const client = this.supabase.getClient();
 
-        await this.pneus.findOneById( pid );
+        await this.pneusService.findOneById( pid );
 
-        let calculo;
+        const { data, error } = await this.supabase.getClient()
+        .from('medicoes')
+        .select()
+        .order('km', {ascending: false})
+        .limit(2)
 
-        const atual : Medicao = dto;
-
-        if ( compare === 'anterior') 
-        {
-            const { data: anterior, error: e1 } = await client
-                .from('medicoes')
-                .select<string,Medicao>('km, sulco, pressao')
-                .eq('pneu', pid)
-                .order('km', { ascending: false })
-                .limit(1)
-                .single();
-
-            if ( !anterior )
-            {
-                throw e1 ? e1 : new NotFoundException(`Não foi possível encontrar a ultima medicão.`);
-            }
-            calculo = new Calculo(atual, anterior);        
+        if ( !data ) {
+            throw error ? error : new Error('Error interno');
         }
 
-        else
-        {
-            const { data: periodo, error: e1 } = await client
-                .from('manutencoes')
-                .select<string,Medicao>('saida')
-                .eq('pneu', pid)
-                .limit(1)
-                .single();
-
-            if ( !periodo )
-            {
-                throw e1 ? e1 : new NotFoundException(`Não foi possível encontrar a ultima medicão.`);
-            }
-
-            calculo = new Calculo(atual, periodo);
+        if (data.length < 2) {
+            new Error('Dados insuficientes');
         }
+
+        const atual = data[0];
+
+        const anterior = data[1];
+            
+        const calculo = new Calculo(atual, anterior);
 
         const result = {
             taxa       : calculo.taxa(),
@@ -67,40 +51,32 @@ export class MedicoesService {
             porcentual : calculo.porcentual()
         };
 
-        const { data: medicao, error: e2 } = await client
-            .from('medicoes')
-            .insert({
-                km: atual.km,
-                sulco: atual.sulco,
-                pressao: atual.pressao
-            })
-            .select('id')
-            .single();
-
-        if ( !medicao )
-        {
-            throw e2 ? e2 : new Error(`Não foi possível registrar a medicão.`);
-        }
-
-        const estado = result.porcentual <= 30 ? 'Bom' : result.porcentual <= 70 ? 'Alerta' : 'Ruim';
-
-        const { data: condicao, error: e3 } = await client
-            .from('condicoes')
-            .insert({
-                estado: estado,
-                medicao: medicao.id,
-                km: atual.km,
-                sulco: atual.sulco
-            })
-            .select()
-            .single()
-
-        if ( !condicao )
-        {
-            throw e3 ? e3 : new Error(`Não foi possível registrar a condicão.`);
-        }
+        await this.condicoesService.createWithMedicao( atual, result );
 
         return result;
+    }
+
+    async create( pid: number, dto: CreateMedicaoDto ): Promise<Medicao>
+    {
+        await this.pneusService.findOneById( pid );
+
+        const { data, error } = await this.supabase.getClient()
+            .from('medicoes')
+            .insert({
+                pneu: pid,
+                km: dto.km,
+                sulco: dto.sulco,
+                pressao: dto.pressao
+            })
+            .select('*')
+            .maybeSingle();
+
+        if ( !data )
+        {
+            throw error ? error : new Error(`Não foi possível registrar a medicão.`);
+        }
+
+        return data;
     }
 
     async findAll(): Promise<object[]>
