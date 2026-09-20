@@ -9,7 +9,7 @@ export class IpvasService {
     
     async create(dto: CreateIpvaDto) {
         const { data, error } = await this.supabase.getClient()
-            .from('ipva')
+            .from('ipvas')
             .insert(dto)
             .select('*')
             .single();
@@ -21,7 +21,7 @@ export class IpvasService {
 
     async findAll() {
         const { data, error } = await this.supabase.getClient()
-            .from('ipva')
+            .from('ipvas')
             .select('*');
         if (error) throw error;
         return data ?? [];
@@ -29,7 +29,7 @@ export class IpvasService {
 
     async findOne(id: number) {
         const { data, error } = await this.supabase.getClient()
-            .from('ipva')
+            .from('ipvas')
             .select('*')
             .eq('id', id)
             .maybeSingle();
@@ -41,7 +41,7 @@ export class IpvasService {
 
     async update(id: number, dto: UpdateIpvaDto) {
         const { data, error } = await this.supabase.getClient()
-            .from('ipva')
+            .from('ipvas')
             .update(dto)
             .eq('id', id)
             .select('*')
@@ -53,7 +53,7 @@ export class IpvasService {
 
     async remove(id: number) {
         const { data, error } = await this.supabase.getClient()
-            .from('ipva')
+            .from('ipvas')
             .delete()
             .eq('id', id)
             .select('id')
