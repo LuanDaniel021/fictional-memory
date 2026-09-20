@@ -9,7 +9,8 @@ export class CrlvService {
 
   constructor( private readonly supabase: SupabaseService ) {}
   
-  async create(dto: CreateCrlvDto) : Promise<Crlv> {
+  async create(dto: CreateCrlvDto) : Promise<Crlv>
+  {
     const { data, error } = await this.supabase.getClient()
       .from('crlvs')
       .insert(dto)
@@ -27,7 +28,7 @@ export class CrlvService {
   {
     const { data, error } = await this.supabase.getClient()
       .from('crlvs')
-      .select();
+      .select<string, Crlv>();
 
     if (error) {
       throw error;
@@ -67,7 +68,7 @@ export class CrlvService {
 
   async updateById(id: number, updateCrlvDto: UpdateCrlvDto): Promise<Crlv> {
     const { data, error } = await this.supabase.getClient()
-      .from('crlv')
+      .from('crlvs')
       .update(updateCrlvDto)
       .eq('id', id)
       .select('*')
@@ -93,7 +94,7 @@ export class CrlvService {
 
   async removeById(id: number): Promise<void> {
     const { data, error } = await this.supabase.getClient()
-      .from('crlv')
+      .from('crlvs')
       .delete()
       .eq('id', id)
       .select('id')
@@ -103,12 +104,13 @@ export class CrlvService {
     if (!data) throw new NotFoundException('CRLV não encontrado');
   }
 
-  async removeByPlate(placa: string): Promise<void> {
+  async removeByPlate(placa: string): Promise<void>
+  {
     const { data, error } = await this.supabase.getClient()
-      .from('crlv')
+      .from('crlvs')
       .delete()
       .eq('placa', placa)
-      .select('placa')
+      .select()
       .maybeSingle();
 
     if (error) throw error;

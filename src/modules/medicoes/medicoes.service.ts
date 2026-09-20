@@ -24,7 +24,7 @@ export class MedicoesService {
 
         let calculo;
 
-        const atual = dto.data;
+        const atual : Medicao = dto;
 
         if ( compare === 'anterior') 
         {

@@ -8,6 +8,7 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateCrlvDto {
+
   @ApiProperty({
     description: 'Placa do veículo',
     example: 'ABC1D23',
@@ -72,13 +73,13 @@ export class CreateCrlvDto {
   @IsOptional()
   marca?: string | null;
 
-  @ApiPropertyOptional({
-    description: 'Modelo do veículo',
-    example: 'FH 540 6x4',
-  })
-  @IsString()
-  @IsOptional()
-  modelo?: string | null;
+  // @ApiPropertyOptional({
+  //   description: 'Modelo do veículo',
+  //   example: 'FH 540 6x4',
+  // })
+  // @IsString()
+  // @IsOptional()
+  // modelo?: string | null;
 
   @ApiPropertyOptional({
     description: 'Espécie do veículo (ex: Carga, Passageiro)',

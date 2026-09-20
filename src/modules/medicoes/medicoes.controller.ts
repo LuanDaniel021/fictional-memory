@@ -4,14 +4,14 @@ import { ApiTags } from '@nestjs/swagger';
 import { CreateMedicaoDto } from './dto/create-medicao.dto';
 
 @ApiTags('Mediçoes')
-@Controller('pneus/:pid/medicoes')
+@Controller('pneus/:pneuId/medicoes')
 export class MedicoesController {
 
   constructor(private readonly medicaoPneusService: MedicoesService) {}
 
   @Post(':compare')
   create(
-    @Param('pid') pid: string,
+    @Param('pneuId') pid: string,
     @Param('compare') compare: 'anterior' | 'periodo',
     @Body() dto: CreateMedicaoDto
   ) {

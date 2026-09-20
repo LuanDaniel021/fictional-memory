@@ -34,12 +34,11 @@ export class VeiculosService {
     const { data: veiculo, error } = await this.supabase.getClient()
       .from('veiculos')
       .insert({
-        km_atual: dto.km_atual,
+        km: dto.km,
         crlv_id: crlv.id,
         template_id: template.id
       })
-      .select()
-      .limit(1)
+      .select<string,Veiculo>(this.query)
       .maybeSingle();
 
     if (!veiculo) {
@@ -119,7 +118,7 @@ export class VeiculosService {
     const { error: e1 } = await this.supabase.getClient()
       .from('alocacoes')
       .delete()
-      .eq('veiculo_id', veiculo.id);
+      .eq('veiculo', veiculo.id);
 
     if (e1) {
       throw e1;

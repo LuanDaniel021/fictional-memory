@@ -10,30 +10,38 @@ export class PneusService {
         private readonly supabase: SupabaseService,
     ) {}
 
-    async create(dto: CreatePneuDto) {
+    async create(dto: CreatePneuDto): Promise<Pneu>
+    {
         const { data, error } = await this.supabase.getClient()
-            .from('pneu')
+            .from('pneus')
             .insert(dto)
             .select('*')
             .single();
 
-        if (error) throw error;
+        if (!data) {
+            throw error ? error : new Error('Erro ao criar pneu.');
+        }
+
         return data;
     }
 
-    async findAll() {
-        const { data, error } = await this.supabase.getClient()
-            .from('pneu')
-            .select('*');
-
-        if (error) throw error;
-        return data ?? [];
-    }
-
-    async findOneById(id: string): Promise<Pneu>
+    async findAll(): Promise<Pneu[]>
     {
         const { data, error } = await this.supabase.getClient()
-            .from('pneu')
+            .from('pneus')
+            .select('*');
+
+        if (!data) {
+            throw error ? error : new Error('Erro ao buscar pnues.');
+        }
+
+        return data;
+    }
+
+    async findOneById(id: string): Promise<Pneu> 
+    {
+        const { data, error } = await this.supabase.getClient()
+            .from('pneus')
             .select<string,Pneu>('*')
             .eq('id', id)
             .maybeSingle();
@@ -46,9 +54,10 @@ export class PneusService {
         return data;
     }
 
-    async update(id: number, dto: UpdatePneuDto) {
+    async update(id: number, dto: UpdatePneuDto): Promise<Pneu>
+    {
         const { data, error } = await this.supabase.getClient()
-            .from('pneu')
+            .from('pneus')
             .update(dto)
             .eq('id', id)
             .select('*')
@@ -59,16 +68,20 @@ export class PneusService {
         return data;
     }
 
-    async remove(id: number) {
+    async remove(id: number): Promise<Pneu>
+    {
         const { data, error } = await this.supabase.getClient()
             .from('pneu')
             .delete()
             .eq('id', id)
-            .select('id')
+            .select()
             .maybeSingle();
 
-        if (error) throw error;
-        if (!data) throw new NotFoundException('Pneu não encontrado');
+        if (!data) {
+            throw error ? error : new NotFoundException('Pneu não encontrado');
+        }
+
+        return data;
     }
 
     async containsAll(pneus: number[]): Promise<boolean> {
@@ -88,7 +101,8 @@ export class PneusService {
         return data.length === pneus.length;
     }
 
-    async findByIds(pneus: number[]): Promise<any[]> {
+    async findAllById(pneus: number[]): Promise<Pneu[]>
+    {
         const { data, error } = await this.supabase.getClient()
             .from('pneu')
             .select('*')
@@ -99,28 +113,6 @@ export class PneusService {
         }
 
         return data;
-    }
-
-    async updatePneusStatus(pneus: number[], status: string): Promise<void> {
-        const { error } = await this.supabase.getClient()
-            .from('pneu')
-            .update({ status })
-            .in('id', pneus);
-
-        if (error) {
-            throw error;
-        }
-    }
-
-    async updatePneusCaminhaoId(pneus: Pneu[], caminhaoId: number | null): Promise<void> {
-        const { error } = await this.supabase.getClient()
-            .from('pneu')
-            .update({ caminhao_id: caminhaoId })
-            .in('id', pneus.map((p) => p.id));
-
-        if (error) {
-            throw error;
-        }
     }
 
 }

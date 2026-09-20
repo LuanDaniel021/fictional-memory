@@ -1,45 +1,38 @@
-import { IsInt, IsString, IsNumber, IsOptional } from 'class-validator';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsInt, IsString, IsNumber, IsOptional, IsNotEmpty } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 
 export class CreatePneuDto {
-  @ApiPropertyOptional({
-    description: 'ID do caminhão em que o pneu está instalado',
-    example: 1,
-  })
-  @IsInt()
-  @IsOptional()
-  caminhao_id?: number | null;
-
-  @ApiPropertyOptional({
-    description: 'Posição do pneu no veículo',
-    example: 'Dianteiro Esquerdo',
-  })
+  
   @IsString()
   @IsOptional()
-  posicao?: string | null;
-
   @ApiPropertyOptional({
-    description: 'Marca / Fabricante do pneu',
-    example: 'Michelin',
+    example:"Michelin"
   })
+  marca: string;
+
   @IsString()
+  @IsNotEmpty()
   @IsOptional()
-  marca?: string | null;
-
   @ApiPropertyOptional({
-    description: 'Profundidade inicial do sulco da banda de rodagem (em mm)',
-    example: 15.5,
+    example:"Grande"
   })
-  @IsNumber()
-  @IsOptional()
-  sulco_inicial_mm?: number | null;
+  modelo : string;
 
-  @ApiPropertyOptional({
-    description: 'Status do pneu (ex: Em uso, Descartado, Manutenção)',
-    example: 'Em uso',
-  })
   @IsString()
+  @IsNotEmpty()
   @IsOptional()
-  status?: string | null;
+  @ApiPropertyOptional({
+    example:"2.0"
+  })
+  medida : string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  @ApiPropertyOptional({
+    example:"12-06-22"
+  })
+  fabricacao : string;
+
 }

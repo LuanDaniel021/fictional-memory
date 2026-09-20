@@ -9,7 +9,7 @@ export class CreateVeiculoDto {
   
   @IsNumber()
   @ApiProperty({ example: 1000 })
-  km_atual: number;
+  km: number;
 
   @ValidateNested()
   @Type(() => CreateCrlvDto)
@@ -21,7 +21,7 @@ export class CreateVeiculoDto {
       marca: 'Mercedes-Benz',
       placa: 'ABC-1234',
       chassi: '9BM12345678901234',
-      modelo: 'Actros',
+//      modelo: 'Actros',
       especie: 'Caminhão de Carga',
       renavam: '123456789012',
       exercicio: 2023,
