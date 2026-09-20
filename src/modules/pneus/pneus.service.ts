@@ -71,7 +71,7 @@ export class PneusService {
     async remove(id: number): Promise<Pneu>
     {
         const { data, error } = await this.supabase.getClient()
-            .from('pneu')
+            .from('pneus')
             .delete()
             .eq('id', id)
             .select()
@@ -84,27 +84,10 @@ export class PneusService {
         return data;
     }
 
-    async containsAll(pneus: number[]): Promise<boolean> {
-        if (pneus.length === 0) {
-            return false;
-        }
-
-        const { data, error } = await this.supabase.getClient()
-            .from('pneu')
-            .select('id')
-            .in('id', pneus);
-
-        if (error) {
-            throw error;
-        }
-
-        return data.length === pneus.length;
-    }
-
     async findAllById(pneus: number[]): Promise<Pneu[]>
     {
         const { data, error } = await this.supabase.getClient()
-            .from('pneu')
+            .from('pneus')
             .select('*')
             .in('id', pneus);
 
