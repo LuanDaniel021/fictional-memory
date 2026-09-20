@@ -38,7 +38,7 @@ export class PneusService {
         return data;
     }
 
-    async findOneById(id: string): Promise<Pneu> 
+    async findOneById(id: number): Promise<Pneu> 
     {
         const { data, error } = await this.supabase.getClient()
             .from('pneus')

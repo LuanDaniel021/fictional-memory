@@ -1,15 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseArrayPipe } from '@nestjs/common';
 import { AlocacoesService } from './alocacoes.service';
-import { CreateAlocacoeDto } from './dto/create-alocacoe.dto';
-import { UpdateAlocacoeDto } from './dto/update-alocacoe.dto';
+import { CreateAlocacaoDto } from './dto/create-alocacao.dto';
+import { UpdateAlocacaoDto } from './dto/update-alocacao.dto';
 
-@Controller('alocacoes')
+@Controller('veiculos/:plate/alocacoes')
 export class AlocacoesController {
+
   constructor(private readonly alocacoesService: AlocacoesService) {}
 
   @Post()
-  create(@Body() createAlocacoeDto: CreateAlocacoeDto) {
-    return this.alocacoesService.create(createAlocacoeDto);
+  alocar(
+    @Param('plate') plate : string,
+    @Body(new ParseArrayPipe({ items: CreateAlocacaoDto })) dtos: CreateAlocacaoDto[]
+  ) {
+    return this.alocacoesService.create(plate, dtos);
   }
 
   @Get()
@@ -23,7 +27,7 @@ export class AlocacoesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAlocacoeDto: UpdateAlocacoeDto) {
+  update(@Param('id') id: string, @Body() updateAlocacoeDto: UpdateAlocacaoDto) {
     return this.alocacoesService.update(+id, updateAlocacoeDto);
   }
 
