@@ -2,8 +2,8 @@
 import { SupabaseService } from "../../supabase/supabase.service";
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { CreateVeiculoDto } from './domains/dto/create-veiculo.dto';
-import { UpdateVeiculoDto } from './domains/dto/update-veiculo.dto';
+import { CreateVeiculoDto } from './dto/create-veiculo.dto';
+import { UpdateVeiculoDto } from './dto/update-veiculo.dto';
 
 import { CrlvService } from '../crlvs/crlvs.service';
 import { PneusService } from '../pneus/pneus.service';
@@ -11,7 +11,7 @@ import { Pneu } from "../pneus/entities/pneu.entity";
 import { TemplatesService } from "../templates/templates.service";
 
 import { Template } from '../templates/entities/template.entity'
-import { Veiculo } from "./domains/entities/veiculo.entity";
+import { Veiculo } from "./entities/veiculo.entity";
 
 @Injectable()
 export class VeiculosService {

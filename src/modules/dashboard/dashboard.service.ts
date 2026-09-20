@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseService } from '../../supabase/supabase.service';
-import { Veiculo } from '../veiculos/domains/entities/veiculo.entity'
+import { Veiculo } from '../veiculos/entities/veiculo.entity'
 import { Pneu } from '../pneus/entities/pneu.entity';
 import { Manutencao } from '../manutencoes/entities/manutencao.entity';
 import { Crlv } from '../crlvs/entities/crlv.entity';

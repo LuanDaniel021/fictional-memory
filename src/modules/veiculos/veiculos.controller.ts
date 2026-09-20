@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, Patch, Post, Delete } from '@nestjs/common';
 import { VeiculosService } from './veiculos.service';
 
-import { CreateVeiculoDto } from './domains/dto/create-veiculo.dto';
-import { UpdateVeiculoDto } from './domains/dto/update-veiculo.dto';
+import { CreateVeiculoDto } from './dto/create-veiculo.dto';
+import { UpdateVeiculoDto } from './dto/update-veiculo.dto';
 import { Pneu } from '../pneus/entities/pneu.entity';
 
 @Controller('veiculos')
