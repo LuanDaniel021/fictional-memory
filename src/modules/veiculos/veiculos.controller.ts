@@ -10,8 +10,8 @@ export class VeiculosController {
 
   constructor(private readonly veiculosService: VeiculosService) {}
 
-  @Post()
-  create( @Body() dto: CreateVeiculoDto )
+  @Post(':fipe')
+  create( @Param('fipe') fipe: boolean, @Body() dto: CreateVeiculoDto )
   {
     return this.veiculosService.create(dto);
   }

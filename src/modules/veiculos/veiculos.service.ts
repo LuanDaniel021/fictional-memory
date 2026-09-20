@@ -9,8 +9,7 @@ import { CrlvService } from '../crlvs/crlvs.service';
 import { PneusService } from '../pneus/pneus.service';
 import { Pneu } from "../pneus/entities/pneu.entity";
 import { TemplatesService } from "../templates/templates.service";
-
-import { Template } from '../templates/entities/template.entity'
+import { Fipe } from './fipe.service';
 import { Veiculo } from "./entities/veiculo.entity";
 
 @Injectable()
