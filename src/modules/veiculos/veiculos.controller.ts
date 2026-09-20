@@ -3,7 +3,6 @@ import { VeiculosService } from './veiculos.service';
 
 import { CreateVeiculoDto } from './dto/create-veiculo.dto';
 import { UpdateVeiculoDto } from './dto/update-veiculo.dto';
-import { Pneu } from '../pneus/entities/pneu.entity';
 
 @Controller('veiculos')
 export class VeiculosController {

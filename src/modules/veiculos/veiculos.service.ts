@@ -6,10 +6,7 @@ import { CreateVeiculoDto } from './dto/create-veiculo.dto';
 import { UpdateVeiculoDto } from './dto/update-veiculo.dto';
 
 import { CrlvService } from '../crlvs/crlvs.service';
-import { PneusService } from '../pneus/pneus.service';
-import { Pneu } from "../pneus/entities/pneu.entity";
 import { TemplatesService } from "../templates/templates.service";
-import { Fipe } from './fipe.service';
 import { Veiculo } from "./entities/veiculo.entity";
 
 @Injectable()
@@ -21,7 +18,6 @@ export class VeiculosService {
     private readonly supabase: SupabaseService,
     private readonly templateService: TemplatesService,
     private readonly crlvService: CrlvService,
-    private readonly pneuService: PneusService,
   ) {}
 
   async create(dto: CreateVeiculoDto): Promise<Veiculo>
