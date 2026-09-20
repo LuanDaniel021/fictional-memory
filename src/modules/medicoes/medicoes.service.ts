@@ -95,7 +95,7 @@ export class MedicoesService {
     async findOneById(id: string): Promise<object>
     {
         const { data, error } = await this.supabase.getClient()
-            .from('medicao_pneu')
+            .from('medicoes')
             .select('*')
             .eq('id', id)
             .maybeSingle();
@@ -114,7 +114,7 @@ export class MedicoesService {
     async update(id: number, dto: object): Promise<object>
     {
         const { data, error } = await this.supabase.getClient()
-            .from('medicao_pneu')
+            .from('medicoes')
             .update(dto)
             .eq('id', id)
             .select('*')
@@ -134,7 +134,7 @@ export class MedicoesService {
     async remove(id: number): Promise<void>
     {
         const { data, error } = await this.supabase.getClient()
-            .from('medicao_pneu')
+            .from('medicoes')
             .delete()
             .eq('id', id)
             .select('id')
@@ -148,4 +148,5 @@ export class MedicoesService {
             throw new NotFoundException('Medição de pneu não encontrada');
         }
     }
+
 }
