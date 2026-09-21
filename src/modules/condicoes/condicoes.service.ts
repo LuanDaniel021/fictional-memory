@@ -19,8 +19,9 @@ export class CondicoesService {
     const { data, error} = await this.supabase.getClient()
         .from('condicoes')
         .insert({
+          pneu: medicao.pneu,
           medicao: medicao.id,  
-          estado: estado,
+          
         })
         .select()
         .maybeSingle()
