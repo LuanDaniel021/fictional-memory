@@ -1,9 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ViagensService } from './viagens.service';
 import { CreateViagenDto } from './dto/create-viagen.dto';
 import { UpdateViagenDto } from './dto/update-viagen.dto';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { SupabaseAuthGuard } from '../../supabase/supabase.auth.guard';
 
 @Controller('viagens')
+@UseGuards(SupabaseAuthGuard, RolesGuard)
+@Roles('user')
 export class ViagensController {
   constructor(private readonly viagensService: ViagensService) {}
 

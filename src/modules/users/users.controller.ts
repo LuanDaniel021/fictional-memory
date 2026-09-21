@@ -6,6 +6,8 @@ import { SupabaseAuthGuard } from '../../supabase/supabase.auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login-user.dto';
 import { User } from '@supabase/supabase-js';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RolesGuard } from '../../common/guards/roles.guard';
 
 @Controller('users')
 @ApiBearerAuth('access-token')
@@ -23,13 +25,15 @@ export class UsersController {
   }
 
   @Get('info')
-  @UseGuards(SupabaseAuthGuard)
+  @UseGuards(SupabaseAuthGuard, RolesGuard)
+  @Roles('user')
   info(@Req() request: Request & { user: User }) {
     return this.usersService.info(request.user);
   }
 
   @Patch("update")
-  @UseGuards(SupabaseAuthGuard)
+  @UseGuards(SupabaseAuthGuard, RolesGuard)
+  @Roles('user')
   update(
     @Req() request: Request & { user: User },
     @Body() updateUserDto: UpdateUserDto
@@ -38,7 +42,8 @@ export class UsersController {
   }
 
   @Delete("remove")
-  @UseGuards(SupabaseAuthGuard)
+  @UseGuards(SupabaseAuthGuard, RolesGuard)
+  @Roles('user')
   remove(@Req() request: Request & { user: User }) {
     return this.usersService.remove(request.user);
   }

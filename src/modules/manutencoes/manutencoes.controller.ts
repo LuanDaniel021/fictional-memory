@@ -1,9 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { ManutencoesService } from './manutencoes.service';
 import { CreateManutencaoDto } from './dto/create-manutencao.dto';
 import { UpdateManutencaoDto } from './dto/update-manutencao.dto';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { SupabaseAuthGuard } from '../../supabase/supabase.auth.guard';
 
 @Controller('manutencoes')
+@UseGuards(SupabaseAuthGuard, RolesGuard)
+@Roles('user')
 export class ManutencoesController {
   constructor(private readonly manutencoesService: ManutencoesService) {}
 

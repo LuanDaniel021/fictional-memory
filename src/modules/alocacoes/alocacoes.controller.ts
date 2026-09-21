@@ -1,9 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseArrayPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseArrayPipe, UseGuards } from '@nestjs/common';
 import { AlocacoesService } from './alocacoes.service';
 import { CreateAlocacaoDto } from './dto/create-alocacao.dto';
 import { UpdateAlocacaoDto } from './dto/update-alocacao.dto';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { SupabaseAuthGuard } from '../../supabase/supabase.auth.guard';
 
 @Controller('veiculos/:plate/alocacoes')
+@UseGuards(SupabaseAuthGuard, RolesGuard)
+@Roles('user')
 export class AlocacoesController {
 
   constructor(private readonly alocacoesService: AlocacoesService) {}

@@ -1,9 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { IpvasService } from './ipvas.service';
 import { CreateIpvaDto } from './dto/create-ipva.dto';
 import { UpdateIpvaDto } from './dto/update-ipva.dto';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { SupabaseAuthGuard } from '../../supabase/supabase.auth.guard';
 
 @Controller('ipvas')
+@UseGuards(SupabaseAuthGuard, RolesGuard)
+@Roles('user')
 export class IpvasController {
   constructor(private readonly ipvasService: IpvasService) {}
 

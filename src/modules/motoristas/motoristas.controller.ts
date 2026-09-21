@@ -1,9 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { MotoristasService } from './motoristas.service';
 import { CreateMotoristaDto } from './dto/create-motorista.dto';
 import { UpdateMotoristaDto } from './dto/update-motorista.dto';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { SupabaseAuthGuard } from '../../supabase/supabase.auth.guard';
 
 @Controller('motoristas')
+@UseGuards(SupabaseAuthGuard, RolesGuard)
+@Roles('user')
 export class MotoristasController {
   constructor(private readonly motoristasService: MotoristasService) {}
 

@@ -1,9 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { CreateCrlvDto } from './dto/create-crlv.dto';
 import { UpdateCrlvDto } from './dto/update-crlv.dto';
 import { CrlvService } from './crlvs.service';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { SupabaseAuthGuard } from '../../supabase/supabase.auth.guard';
 
 @Controller('crlvs')
+@UseGuards(SupabaseAuthGuard, RolesGuard)
+@Roles('user')
 export class CrlvController {
 	constructor(private readonly crlvService: CrlvService) {}
 

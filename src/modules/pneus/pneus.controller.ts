@@ -1,11 +1,16 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { PneusService } from './pneus.service';
 import { CreatePneuDto } from './dto/create-pneus.dto';
 import { UpdatePneuDto } from './dto/update-pneus.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { SupabaseAuthGuard } from '../../supabase/supabase.auth.guard';
 
 @ApiTags('Pneus')
 @Controller('pneus')
+@UseGuards(SupabaseAuthGuard, RolesGuard)
+@Roles('user')
 export class PneusController {
   constructor(private readonly pneusService: PneusService) {}
 

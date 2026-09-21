@@ -1,9 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { CondicoesService } from './condicoes.service';
 import { CreateCondicaoDto } from './dto/create-condicao.dto';
 import { UpdateCondicaoDto } from './dto/update-condicao.dto';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { SupabaseAuthGuard } from '../../supabase/supabase.auth.guard';
 
 @Controller('medicoes/:medicaoId/condicoes')
+@UseGuards(SupabaseAuthGuard, RolesGuard)
+@Roles('user')
 export class CondicoesController {
   constructor(private readonly condicoesService: CondicoesService) {}
 
