@@ -9,7 +9,7 @@ import { CrlvController } from './crlvs.controller';
 @Module({
   imports: [ SupabaseModule, SupabaseAuthModule ],
   controllers: [CrlvController],
-  providers: [CrlvService, SupabaseAuthGuard, RolesGuard],
+  providers: [CrlvService],
   exports: [CrlvService]
 })
 export class CrlvsModule {}
