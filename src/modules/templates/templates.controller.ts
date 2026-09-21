@@ -5,8 +5,10 @@ import { UpdateTemplateDto } from './dto/update-template.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { SupabaseAuthGuard } from '../../supabase/supabase.auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('templates')
+@ApiBearerAuth('access-token')
 @UseGuards(SupabaseAuthGuard, RolesGuard)
 @Roles('user')
 export class TemplatesController {

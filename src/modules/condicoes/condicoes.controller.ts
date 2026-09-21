@@ -5,8 +5,10 @@ import { UpdateCondicaoDto } from './dto/update-condicao.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { SupabaseAuthGuard } from '../../supabase/supabase.auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('medicoes/:medicaoId/condicoes')
+@ApiBearerAuth('access-token')
 @UseGuards(SupabaseAuthGuard, RolesGuard)
 @Roles('user')
 export class CondicoesController {

@@ -3,10 +3,12 @@ import { DashboardService } from './dashboard.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { SupabaseAuthGuard } from '../../supabase/supabase.auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 // import { CreateDashboardDto } from './dto/create-dashboard.dto';
 // import { UpdateDashboardDto } from './dto/update-dashboard.dto';
 
 @Controller('dashboard')
+@ApiBearerAuth('access-token')
 @UseGuards(SupabaseAuthGuard, RolesGuard)
 @Roles('user')
 export class DashboardController {

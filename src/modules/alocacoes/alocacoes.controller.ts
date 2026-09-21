@@ -5,8 +5,10 @@ import { UpdateAlocacaoDto } from './dto/update-alocacao.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { SupabaseAuthGuard } from '../../supabase/supabase.auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('veiculos/:plate/alocacoes')
+@ApiBearerAuth('access-token')
 @UseGuards(SupabaseAuthGuard, RolesGuard)
 @Roles('user')
 export class AlocacoesController {

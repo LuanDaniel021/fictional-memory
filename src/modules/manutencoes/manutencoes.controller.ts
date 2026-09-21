@@ -5,8 +5,10 @@ import { UpdateManutencaoDto } from './dto/update-manutencao.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { SupabaseAuthGuard } from '../../supabase/supabase.auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('manutencoes')
+@ApiBearerAuth('access-token')
 @UseGuards(SupabaseAuthGuard, RolesGuard)
 @Roles('user')
 export class ManutencoesController {
