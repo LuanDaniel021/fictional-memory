@@ -4,10 +4,12 @@ import { VeiculosService } from "./veiculos.service";
 import { SupabaseModule } from "../../supabase/supabase.module";
 import { CrlvsModule } from "../crlvs/crlvs.module";
 import { TemplatesModule } from "../templates/templates.module";
+import { SupabaseAuthModule } from "../../supabase/supabase.auth.module";
 
 @Module({
     imports: [
         SupabaseModule,
+        SupabaseAuthModule,
         CrlvsModule,
         TemplatesModule
     ],

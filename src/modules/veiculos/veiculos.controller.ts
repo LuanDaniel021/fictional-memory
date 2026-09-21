@@ -23,7 +23,7 @@ export class VeiculosController {
   }
 
   @Get()
-  @Roles('user')
+  @Roles('admin')
   findAll()
   {
     return this.veiculosService.findAll();
