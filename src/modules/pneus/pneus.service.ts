@@ -31,6 +31,11 @@ export class PneusService {
             .from('pneus')
             .select('*');
 
+console.log('SUPABASE PNEUS:', {
+    quantidade: data?.length,
+    erro: error?.message,
+  });
+
         if (!data) {
             throw error ? error : new Error('Erro ao buscar pnues.');
         }
