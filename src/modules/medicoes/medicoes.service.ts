@@ -1,5 +1,5 @@
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 
 import { SupabaseService } from '../../supabase/supabase.service';
 import { CreateMedicaoDto } from './dto/create-medicao.dto';
@@ -20,22 +20,21 @@ export class MedicoesService {
 
     async me( pid: number ): Promise<object>
     {
-        const client = this.supabase.getClient();
-
         await this.pneusService.findOneById( pid );
 
         const { data, error } = await this.supabase.getClient()
         .from('medicoes')
         .select()
+        .eq('pneu', pid)
         .order('km', {ascending: false})
         .limit(2)
 
-        if ( !data ) {
-            throw error ? error : new Error('Error interno');
+        if (error) {
+            throw new InternalServerErrorException(`Erro ao buscar medições: ${error.message}`);
         }
 
         if (data.length < 2) {
-            new Error('Dados insuficientes');
+            throw new BadRequestException('São necessárias pelo menos duas medições do pneu para calcular.');
         }
 
         const atual = data[0];
@@ -73,20 +72,24 @@ export class MedicoesService {
 
         if ( !data )
         {
-            throw error ? error : new Error(`Não foi possível registrar a medicão.`);
+            throw new InternalServerErrorException(
+                error?.message ?? 'Não foi possível registrar a medição.',
+            );
         }
 
         return data;
     }
 
-    async findAll(): Promise<object[]>
+    async findAll(pid: number): Promise<object[]>
     {
         const { data, error } = await this.supabase.getClient()
             .from('medicoes')
-            .select('*');
+            .select('*')
+            .eq('pneu', pid)
+            .order('km', { ascending: false });
 
         if (error) {
-            throw error;
+            throw new InternalServerErrorException(`Erro ao buscar medições: ${error.message}`);
         }
 
         return data ?? [];

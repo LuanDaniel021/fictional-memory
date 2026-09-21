@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateAlocacaoDto } from './dto/create-alocacao.dto';
 import { UpdateAlocacaoDto } from './dto/update-alocacao.dto';
 import { Alocacao } from './entities/alocacao.entity';
@@ -18,9 +18,22 @@ export class AlocacoesService {
   async create(placa: string, dtos: CreateAlocacaoDto[]): Promise<Alocacao[]> {
     const client = this.supabase.getClient();
 
+    if (dtos.length === 0) {
+      throw new BadRequestException('Informe pelo menos uma alocação.');
+    }
+
+    const pneuIds = dtos.map((dto) => dto.pneu);
+    if (new Set(pneuIds).size !== pneuIds.length) {
+      throw new BadRequestException('O mesmo pneu não pode ser informado mais de uma vez.');
+    }
+
+    const posicoes = dtos.map((dto) => `${dto.eixo}-${dto.lado}-${dto.indice}`);
+    if (new Set(posicoes).size !== posicoes.length) {
+      throw new BadRequestException('A mesma posição não pode ser informada mais de uma vez.');
+    }
+
     // 1. Busca veículo e valida existência dos pneus
     const veiculo = await this.veiculosService.findOneByPlate(placa);
-    const pneuIds = dtos.map((dto) => dto.pneu);
     await this.pneusService.findAllById(pneuIds);
 
     // 2. Valida se as posições são permitidas pelo template
@@ -34,14 +47,18 @@ export class AlocacoesService {
 
     // 3. Buscar alocações existentes dos pneus e do veículo
     // Regra: Pneu já em outro veículo -> Rejeitar
-    const { data: alocacoesPneus } = await client
+    const { data: alocacoesPneus, error: alocacoesPneusError } = await client
       .from('alocacoes')
       .select('*')
       .in('pneu', pneuIds)
       .eq('ativa', true);
 
+    if (alocacoesPneusError) {
+      throw new InternalServerErrorException(`Erro ao buscar alocações: ${alocacoesPneusError.message}`);
+    }
+
     const pneusEmOutrosVeiculos = (alocacoesPneus || []).filter(
-      (aloc) => aloc.veiculo_id !== veiculo.id,
+      (aloc) => aloc.veiculo !== veiculo.id,
     );
 
     if (pneusEmOutrosVeiculos.length > 0) {
@@ -51,11 +68,15 @@ export class AlocacoesService {
     }
 
     // 4. Processar alocações do veículo atual
-    const { data: alocacoesVeiculo } = await client
+    const { data: alocacoesVeiculo, error: alocacoesVeiculoError } = await client
       .from('alocacoes')
       .select('*')
       .eq('veiculo', veiculo.id)
       .eq('ativa', true);
+
+    if (alocacoesVeiculoError) {
+      throw new InternalServerErrorException(`Erro ao buscar alocações do veículo: ${alocacoesVeiculoError.message}`);
+    }
 
     const paraInativarIds: string[] = [];
     const registrosParaSalvar: any[] = [];
@@ -86,7 +107,7 @@ export class AlocacoesService {
         // Mova o pneu de destino para a posição original do pneu recebido
         registrosParaSalvar.push({
           veiculo: veiculo.id,
-          pneu: alocacaoNaPosicaoDestino.pneu_id,
+          pneu: alocacaoNaPosicaoDestino.pneu,
           eixo: alocacaoAtualPneu.eixo,
           lado: alocacaoAtualPneu.lado,
           indice: alocacaoAtualPneu.indice,
@@ -139,19 +160,92 @@ export class AlocacoesService {
     return novasAlocacoes as Alocacao[];
   }
 
-  findAll() {
-    return `This action returns all alocacoes`;
+  async findAll(placa: string): Promise<Alocacao[]> {
+    const veiculo = await this.veiculosService.findOneByPlate(placa);
+    const { data, error } = await this.supabase.getClient()
+      .from('alocacoes')
+      .select('*')
+      .eq('veiculo', veiculo.id)
+      .eq('ativa', true);
+
+    if (error) {
+      throw new InternalServerErrorException(`Erro ao buscar alocações: ${error.message}`);
+    }
+
+    return data ?? [];
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} alocacoe`;
+  async findOne(placa: string, id: number): Promise<Alocacao> {
+    const veiculo = await this.veiculosService.findOneByPlate(placa);
+    const { data, error } = await this.supabase.getClient()
+      .from('alocacoes')
+      .select('*')
+      .eq('id', id)
+      .eq('veiculo', veiculo.id)
+      .maybeSingle();
+
+    if (error) {
+      throw new InternalServerErrorException(`Erro ao buscar alocação: ${error.message}`);
+    }
+
+    if (!data) {
+      throw new NotFoundException('Alocação não encontrada');
+    }
+
+    return data;
   }
 
-  update(id: number, dto: UpdateAlocacaoDto) {
-    return `This action updates a #${id} alocacoe`;
+  async update(placa: string, id: number, dto: UpdateAlocacaoDto): Promise<Alocacao> {
+    const veiculo = await this.veiculosService.findOneByPlate(placa);
+    await this.findOne(placa, id);
+
+    const eixo = dto.eixo ?? undefined;
+    const lado = dto.lado ?? undefined;
+    const indice = dto.indice ?? undefined;
+    if (eixo !== undefined && lado !== undefined && indice !== undefined &&
+        !veiculo.template.permite(eixo, lado, indice)) {
+      throw new BadRequestException('Posição inválida no template.');
+    }
+
+    if (dto.pneu !== undefined) {
+      await this.pneusService.findOneById(dto.pneu);
+    }
+
+    const { data, error } = await this.supabase.getClient()
+      .from('alocacoes')
+      .update(dto)
+      .eq('id', id)
+      .eq('veiculo', veiculo.id)
+      .select('*')
+      .maybeSingle();
+
+    if (error) {
+      throw new InternalServerErrorException(`Erro ao atualizar alocação: ${error.message}`);
+    }
+
+    if (!data) {
+      throw new NotFoundException('Alocação não encontrada');
+    }
+
+    return data;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} alocacoe`;
+  async remove(placa: string, id: number): Promise<void> {
+    const veiculo = await this.veiculosService.findOneByPlate(placa);
+    const { data, error } = await this.supabase.getClient()
+      .from('alocacoes')
+      .update({ ativa: false })
+      .eq('id', id)
+      .eq('veiculo', veiculo.id)
+      .select('id')
+      .maybeSingle();
+
+    if (error) {
+      throw new InternalServerErrorException(`Erro ao remover alocação: ${error.message}`);
+    }
+
+    if (!data) {
+      throw new NotFoundException('Alocação não encontrada');
+    }
   }
 }

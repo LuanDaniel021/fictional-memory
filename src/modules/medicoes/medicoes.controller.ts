@@ -11,22 +11,22 @@ export class MedicoesController {
 
   @Post()
   create(
-    @Param('pneuId') pid: number,
+    @Param('pneuId', ParseIntPipe) pid: number,
     @Body() dto: CreateMedicaoDto
   ) {
     return this.medicaoPneusService.create(pid, dto);
   }
 
-  @Post()
+  @Get('calculo')
   medicao(
-    @Param('pneuId') pid: number,
+    @Param('pneuId', ParseIntPipe) pid: number,
   ) {
     return this.medicaoPneusService.me(pid);
   }
 
-  @Get(':id/medicoes')
-  findAll() {
-    return this.medicaoPneusService.findAll();
+  @Get()
+  findAll(@Param('pneuId', ParseIntPipe) pid: number) {
+    return this.medicaoPneusService.findAll(pid);
   }
 
   @Get(':id')

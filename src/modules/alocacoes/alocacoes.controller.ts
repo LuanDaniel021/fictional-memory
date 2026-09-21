@@ -17,22 +17,22 @@ export class AlocacoesController {
   }
 
   @Get()
-  findAll() {
-    return this.alocacoesService.findAll();
+  findAll(@Param('plate') plate: string) {
+    return this.alocacoesService.findAll(plate);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.alocacoesService.findOne(+id);
+  findOne(@Param('plate') plate: string, @Param('id') id: string) {
+    return this.alocacoesService.findOne(plate, +id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAlocacoeDto: UpdateAlocacaoDto) {
-    return this.alocacoesService.update(+id, updateAlocacoeDto);
+  update(@Param('plate') plate: string, @Param('id') id: string, @Body() updateAlocacoeDto: UpdateAlocacaoDto) {
+    return this.alocacoesService.update(plate, +id, updateAlocacoeDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.alocacoesService.remove(+id);
+  remove(@Param('plate') plate: string, @Param('id') id: string) {
+    return this.alocacoesService.remove(plate, +id);
   }
 }

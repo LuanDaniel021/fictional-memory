@@ -1,5 +1,6 @@
 
 import { Medicao } from "./entities/medicao.entity";
+import { BadRequestException } from "@nestjs/common";
 
 export class Calculo {
 
@@ -17,11 +18,19 @@ export class Calculo {
 
     taxa(): number
     {
+        if (this.distancia() <= 0) {
+            throw new BadRequestException('A medição atual deve ter quilometragem maior que a anterior.');
+        }
+
         return this.desgaste() / this.distancia();
     }
 
     porcentual(): number
     {
-        return (this.distancia() / this.atual.sulco) * 100;
+        if (this.anterior.sulco <= 0) {
+            throw new BadRequestException('A profundidade do sulco anterior deve ser maior que zero.');
+        }
+
+        return (this.desgaste() / this.anterior.sulco) * 100;
     }
 }
