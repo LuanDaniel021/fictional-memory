@@ -31,6 +31,7 @@ export class PneusService {
             .from('pneus')
             .select('*');
 
+        console.log('SUPABASE URL:', process.env.SUPABASE_URL);
 console.log('SUPABASE PNEUS:', {
     quantidade: data?.length,
     erro: error?.message,

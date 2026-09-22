@@ -8,9 +8,7 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 
 @Module({
   imports: [SupabaseModule, SupabaseAuthModule],
-  controllers: [
-    PneusController
-  ],
+  controllers: [PneusController],
   providers: [PneusService, SupabaseAuthGuard, RolesGuard],
   exports: [PneusService]
 })
