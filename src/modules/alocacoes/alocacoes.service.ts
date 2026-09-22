@@ -57,7 +57,6 @@ export class AlocacoesService {
       .from('alocacoes')
       .select('*')
       .in('pneu', pneuIds)
-      .eq('ativa', true);
 
     if (alocacoesPneusError) {
       throw new InternalServerErrorException(`Erro ao buscar alocações: ${alocacoesPneusError.message}`);
@@ -170,7 +169,6 @@ export class AlocacoesService {
       .from('alocacoes')
       .select('*')
       .eq('veiculo', veiculo.id)
-      .eq('ativa', true);
 
     if (error) {
       throw new InternalServerErrorException(`Erro ao buscar alocações: ${error.message}`);
@@ -238,7 +236,7 @@ export class AlocacoesService {
     const veiculo = await this.veiculosService.findOneByPlate(placa);
     const { data, error } = await this.supabase.getClient()
       .from('alocacoes')
-      .update({ ativa: false })
+      .delete()
       .eq('id', id)
       .eq('veiculo', veiculo.id)
       .select('id')
