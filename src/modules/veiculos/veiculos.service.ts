@@ -61,7 +61,7 @@ export class VeiculosService {
   {
     const { data, error } = await this.supabase.getClient()
       .from('veiculos')
-      .selectselect<string, Veiculo>(this.query)
+      .select<string, Veiculo>(this.query)
       .eq('id', id)
       .maybeSingle();
 

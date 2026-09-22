@@ -5,6 +5,7 @@ import { Alocacao } from './entities/alocacao.entity';
 import { VeiculosService } from '../veiculos/veiculos.service';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { PneusService } from '../pneus/pneus.service';
+import { Template } from '../templates/entities/template.entity';
 
 @Injectable()
 export class AlocacoesService {
