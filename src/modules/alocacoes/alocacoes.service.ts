@@ -78,7 +78,6 @@ export class AlocacoesService {
       .from('alocacoes')
       .select('*')
       .eq('veiculo', veiculo.id)
-      .eq('ativa', true);
 
     if (alocacoesVeiculoError) {
       throw new InternalServerErrorException(`Erro ao buscar alocações do veículo: ${alocacoesVeiculoError.message}`);
