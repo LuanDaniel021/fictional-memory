@@ -8,6 +8,7 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { SupabaseAuthGuard } from '../../supabase/supabase.auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
+@Roles('user')
 @ApiTags('Pneus')
 @Controller('pneus')
 @ApiBearerAuth('access-token')
@@ -21,7 +22,6 @@ export class PneusController {
   }
 
   @Get()
-  @Roles('user')
   findAll() {
     return this.pneusService.findAll();
   }

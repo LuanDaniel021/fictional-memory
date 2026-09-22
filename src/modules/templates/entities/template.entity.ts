@@ -5,6 +5,19 @@ export class Template {
   nome: string
   estrutura: string[]
 
+  static of(
+    id: number,
+    nome: string,
+    estrutura: string[],
+  ): Template
+  {
+    const t = new Template();
+    t.id = id;
+    t.nome = nome;
+    t.estrutura = estrutura;
+    return t;
+  }
+
   permite( eixo: number, lado: 'E' | 'D', indice: number ) {
     const linha = this.estrutura[eixo]
 

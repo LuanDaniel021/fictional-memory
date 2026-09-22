@@ -34,11 +34,16 @@ export class AlocacoesService {
 
     // 1. Busca veículo e valida existência dos pneus
     const veiculo = await this.veiculosService.findOneByPlate(placa);
+    const template = Template.of(
+      veiculo.template.id,
+      veiculo.template.nome,
+      veiculo.template.estrutura,
+    );
     await this.pneusService.findAllById(pneuIds);
 
     // 2. Valida se as posições são permitidas pelo template
     for (const dto of dtos) {
-      if (!veiculo.template.permite(dto.eixo, dto.lado, dto.indice)) {
+      if (!template.permite(dto.eixo, dto.lado, dto.indice)) {
         throw new BadRequestException(
           `Posição inválida no template: eixo ${dto.eixo}, lado ${dto.lado}, índice ${dto.indice}.`,
         );

@@ -57,11 +57,11 @@ export class VeiculosService {
     return data ?? []
   }
 
-  async findOneById(id: string)
+  async findOneById(id: string): Promise<Veiculo>
   {
     const { data, error } = await this.supabase.getClient()
       .from('veiculos')
-      .select(this.query)
+      .selectselect<string, Veiculo>(this.query)
       .eq('id', id)
       .maybeSingle();
 
