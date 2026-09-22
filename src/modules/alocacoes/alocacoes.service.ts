@@ -117,7 +117,6 @@ export class AlocacoesService {
           eixo: alocacaoAtualPneu.eixo,
           lado: alocacaoAtualPneu.lado,
           indice: alocacaoAtualPneu.indice,
-          ativa: true,
         });
       } else if (alocacaoNaPosicaoDestino) {
         // REGRA: Substituição simples (desativa o pneu anterior da posição)
