@@ -11,7 +11,7 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 @ApiTags('Pneus')
 @Controller('pneus')
 @ApiBearerAuth('access-token')
-@UseGuards(SupabaseAuthGuard)
+@UseGuards(SupabaseAuthGuard, RolesGuard)
 export class PneusController {
   constructor(private readonly pneusService: PneusService) {}
 
@@ -21,6 +21,7 @@ export class PneusController {
   }
 
   @Get()
+  @Roles('user')
   findAll() {
     return this.pneusService.findAll();
   }
