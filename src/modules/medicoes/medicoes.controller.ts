@@ -1,11 +1,11 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { MedicoesService } from './medicoes.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateMedicaoDto } from './dto/create-medicao.dto';
+import { CalcularMedicoesDto } from './dto/calcular-medicoes.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { SupabaseAuthGuard } from '../../supabase/supabase.auth.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('Mediçoes')
 @Controller('pneus/:pneuId/medicoes')
@@ -29,6 +29,18 @@ export class MedicoesController {
     @Param('pneuId', ParseIntPipe) pid: number,
   ) {
     return this.medicaoPneusService.me(pid);
+  }
+
+  @Get('calculo/comparar')
+  calcularEntreDuasMedicoes(
+    @Param('pneuId', ParseIntPipe) pid: number,
+    @Query() query: CalcularMedicoesDto,
+  ) {
+    return this.medicaoPneusService.calcularEntreDuasMedicoes(
+      pid,
+      query.medicaoId1,
+      query.medicaoId2,
+    );
   }
 
   @Get()
