@@ -56,7 +56,7 @@ export class AlocacoesService {
     const { data: alocacoesPneus, error: alocacoesPneusError } = await client
       .from('alocacoes')
       .select('*')
-      .in('pneu', pneuIds)
+      .in('pneu', pneuIds);
 
     if (alocacoesPneusError) {
       throw new InternalServerErrorException(`Erro ao buscar alocações: ${alocacoesPneusError.message}`);
@@ -76,13 +76,13 @@ export class AlocacoesService {
     const { data: alocacoesVeiculo, error: alocacoesVeiculoError } = await client
       .from('alocacoes')
       .select('*')
-      .eq('veiculo', veiculo.id)
+      .eq('veiculo', veiculo.id);
 
     if (alocacoesVeiculoError) {
       throw new InternalServerErrorException(`Erro ao buscar alocações do veículo: ${alocacoesVeiculoError.message}`);
     }
 
-    const paraInativarIds: string[] = [];
+    const paraRemoverIds: string[] = [];
     const registrosParaSalvar: any[] = [];
 
     for (const dto of dtos) {
@@ -105,10 +105,10 @@ export class AlocacoesService {
         alocacaoNaPosicaoDestino &&
         alocacaoAtualPneu.id !== alocacaoNaPosicaoDestino.id
       ) {
-        // Marca ambas as alocações antigas para inativação/remoção
-        paraInativarIds.push(alocacaoAtualPneu.id, alocacaoNaPosicaoDestino.id);
+        // Marca ambas as alocações antigas para remoção
+        paraRemoverIds.push(alocacaoAtualPneu.id, alocacaoNaPosicaoDestino.id);
 
-        // Mova o pneu de destino para a posição original do pneu recebido
+        // Move o pneu de destino para a posição original do pneu recebido
         registrosParaSalvar.push({
           veiculo: veiculo.id,
           pneu: alocacaoNaPosicaoDestino.pneu,
@@ -117,11 +117,11 @@ export class AlocacoesService {
           indice: alocacaoAtualPneu.indice,
         });
       } else if (alocacaoNaPosicaoDestino) {
-        // REGRA: Substituição simples (desativa o pneu anterior da posição)
-        paraInativarIds.push(alocacaoNaPosicaoDestino.id);
+        // REGRA: Substituição simples (remove a alocação anterior da posição)
+        paraRemoverIds.push(alocacaoNaPosicaoDestino.id);
       } else if (alocacaoAtualPneu) {
         // REGRA: Apenas moveu de posição dentro do mesmo veículo para um local vazio
-        paraInativarIds.push(alocacaoAtualPneu.id);
+        paraRemoverIds.push(alocacaoAtualPneu.id);
       }
 
       // REGRA: Aloca o novo pneu/posição solicitada no DTO
@@ -134,16 +134,16 @@ export class AlocacoesService {
       });
     }
 
-    // 5. Inativa/remove alocações antigas afetadas
-    if (paraInativarIds.length > 0) {
-      const { error: updateError } = await client
+    // 5. Remove alocações antigas afetadas
+    if (paraRemoverIds.length > 0) {
+      const { error: deleteError } = await client
         .from('alocacoes')
-        .update({ ativa: false }) // ou .delete() dependendo do seu modelo
-        .in('id', Array.from(new Set(paraInativarIds)));
+        .delete()
+        .in('id', Array.from(new Set(paraRemoverIds)));
 
-      if (updateError) {
+      if (deleteError) {
         throw new InternalServerErrorException(
-          `Erro ao atualizar posições anteriores: ${updateError.message}`,
+          `Erro ao remover posições anteriores: ${deleteError.message}`,
         );
       }
     }
@@ -168,7 +168,7 @@ export class AlocacoesService {
     const { data, error } = await this.supabase.getClient()
       .from('alocacoes')
       .select('*')
-      .eq('veiculo', veiculo.id)
+      .eq('veiculo', veiculo.id);
 
     if (error) {
       throw new InternalServerErrorException(`Erro ao buscar alocações: ${error.message}`);
